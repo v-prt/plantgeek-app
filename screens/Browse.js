@@ -21,6 +21,7 @@ export const Browse = () => {
     <View style={styles.screen}>
       {status === 'loading' && <ActivityIndicator size='large' color={COLORS.primary100} />}
       {status === 'success' && (
+        // TODO: error/no results
         <PlantList
           onScroll={handleScroll}
           plants={data.pages.map(group => group.plants.map(plant => plant)).flat()}

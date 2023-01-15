@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { COLORS } from '../GlobalStyles'
 
-export const Profile = () => {
+export const UserProfile = () => {
   return (
     <View style={styles.screen}>
       <Text style={styles.text}>Profile</Text>

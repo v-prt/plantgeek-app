@@ -18,7 +18,8 @@
     "react": "18.1.0",
     "react-native": "0.70.5",
     "react-native-dotenv": "^3.4.7",
-    "react-query": "^3.39.2"
+    "react-query": "^3.39.2",
+    "expo-linear-gradient": "~12.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

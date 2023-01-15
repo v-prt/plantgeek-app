@@ -8,6 +8,8 @@ export const PlantList = ({ plants }) => {
       renderItem={({ item }) => <PlantCard plant={item} />}
       keyExtractor={item => item._id}
       style={styles.list}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 10 }}
     />
   )
 }
@@ -15,6 +17,6 @@ export const PlantList = ({ plants }) => {
 const styles = StyleSheet.create({
   list: {
     width: '100%',
-    padding: 8,
+    padding: 10,
   },
 })

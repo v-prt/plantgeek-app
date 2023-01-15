@@ -1,23 +1,32 @@
-import { StyleSheet, View, Image, Text } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import { StyleSheet, View, Pressable, Image, Text } from 'react-native'
 import { COLORS } from '../GlobalStyles'
 
 export const PlantCard = ({ plant }) => {
+  const navigation = useNavigation()
+
+  const handlePress = () => {
+    navigation.navigate('PlantProfile', { slug: plant.slug, name: plant.primaryName })
+  }
+
   return (
     <View style={styles.cardContainer}>
-      <View style={styles.card}>
+      <Pressable
+        style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+        onPress={handlePress}>
         <Image source={{ uri: plant.imageUrl }} style={styles.image} />
         <View style={styles.info}>
           <Text style={styles.title}>{plant.primaryName.toLowerCase()}</Text>
           <Text style={styles.subtitle}>{plant.secondaryName?.toLowerCase()}</Text>
         </View>
-      </View>
+      </Pressable>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   cardContainer: {
-    padding: 8,
+    marginBottom: 10,
     flex: 1,
   },
   card: {
@@ -35,6 +44,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 3, height: 3 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
+  },
+  pressed: {
+    opacity: 0.8,
   },
   image: {
     height: 100,

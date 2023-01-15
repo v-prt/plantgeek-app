@@ -1,7 +1,6 @@
 import { createContext, useState } from 'react'
 import axios from 'axios'
-import { REACT_APP_API_URL } from '@env'
-const API_URL = REACT_APP_API_URL
+import { API_URL } from '../constants'
 
 export const PlantContext = createContext(null)
 
