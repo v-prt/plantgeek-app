@@ -7,8 +7,8 @@ export const NeedIndicatorBar = ({ icon, label, need, level }) => {
       <Image source={icon} style={styles.icon} />
       <View style={styles.indicatorWrapper}>
         <View style={styles.textWrapper}>
-          <Text style={styles.label}>{label}</Text>
           <Text style={styles.need}>{need}</Text>
+          <Text style={styles.label}>{label}</Text>
         </View>
         <View style={styles.indicator}>
           <View style={styles.indicatorFill} />
@@ -30,16 +30,18 @@ const styles = StyleSheet.create({
   },
   textWrapper: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
+    marginBottom: 4,
   },
   label: {
     fontSize: 12,
     opacity: 0.5,
   },
   need: {
-    marginBottom: 6,
+    fontFamily: 'Quicksand-Medium',
     fontSize: 16,
+    opacity: 0.5,
   },
   indicatorWrapper: {
     flex: 1,

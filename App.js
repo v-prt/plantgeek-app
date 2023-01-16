@@ -1,8 +1,12 @@
+import { useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { MaterialIcons } from '@expo/vector-icons'
+import { useFonts } from 'expo-font'
+import * as SplashScreen from 'expo-splash-screen'
+import { setCustomText } from 'react-native-global-props'
 
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { PlantProvider } from './contexts/PlantContext'
@@ -16,6 +20,8 @@ const queryClient = new QueryClient()
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
+
+SplashScreen.preventAutoHideAsync()
 
 const PlantScreens = () => {
   return (
@@ -37,6 +43,7 @@ const PlantScreens = () => {
         name='Browse'
         component={Browse}
         options={{
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name='search' size={size} color={color} />
           ),
@@ -54,6 +61,36 @@ const PlantScreens = () => {
 }
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    'Quicksand-Regular': require('./assets/fonts/Quicksand-Regular.ttf'),
+    'Quicksand-Medium': require('./assets/fonts/Quicksand-Medium.ttf'),
+    'Quicksand-Bold': require('./assets/fonts/Quicksand-Bold.ttf'),
+  })
+
+  // app-wide font / text style
+  const customTextProps = {
+    style: {
+      fontFamily: 'Quicksand-Regular',
+    },
+  }
+
+  useEffect(() => {
+    const prepare = async () => {
+      // simulate longer loading by waiting 1 second
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      await SplashScreen.hideAsync()
+    }
+
+    if (fontsLoaded) {
+      prepare()
+      setCustomText(customTextProps)
+    }
+  }, [fontsLoaded])
+
+  if (!fontsLoaded) {
+    return null
+  }
+
   return (
     <NavigationContainer>
       <QueryClientProvider client={queryClient}>

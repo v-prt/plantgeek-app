@@ -1,7 +1,8 @@
 import { StyleSheet, FlatList } from 'react-native'
+import { COLORS } from '../GlobalStyles'
 import { PlantCard } from './PlantCard'
 
-export const PlantList = ({ plants }) => {
+export const PlantList = ({ plants, infiniteScroll }) => {
   return (
     <FlatList
       data={plants}
@@ -10,12 +11,15 @@ export const PlantList = ({ plants }) => {
       style={styles.list}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 10 }}
+      onEndReachedThreshold={0.5}
+      onEndReached={infiniteScroll}
     />
   )
 }
 
 const styles = StyleSheet.create({
   list: {
+    backgroundColor: COLORS.primary300,
     width: '100%',
     padding: 10,
   },

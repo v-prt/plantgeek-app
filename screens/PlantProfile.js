@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   primaryName: {
     color: COLORS.primary800,
     fontSize: 22,
-    fontWeight: 'bold',
+    fontFamily: 'Quicksand-Bold',
     marginBottom: 6,
   },
   secondaryName: {
