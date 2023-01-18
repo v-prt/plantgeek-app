@@ -16,8 +16,8 @@ export const PlantCard = ({ plant }) => {
         onPress={handlePress}>
         <Image source={{ uri: plant.imageUrl }} style={styles.image} />
         <View style={styles.info}>
-          <Text style={styles.title}>{plant.primaryName.toLowerCase()}</Text>
-          <Text style={styles.subtitle}>{plant.secondaryName?.toLowerCase()}</Text>
+          <Text style={styles.title}>{plant.primaryName}</Text>
+          <Text style={styles.subtitle}>{plant.secondaryName}</Text>
         </View>
       </Pressable>
     </View>

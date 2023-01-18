@@ -1,7 +1,7 @@
 import { StyleSheet, View, Image, Text } from 'react-native'
 import { COLORS } from '../../GlobalStyles'
 
-export const NeedIndicatorBar = ({ icon, label, need, level }) => {
+export const NeedIndicatorBar = ({ icon, label, need, indicatorWidth }) => {
   return (
     <View style={styles.container}>
       <Image source={icon} style={styles.icon} />
@@ -11,7 +11,7 @@ export const NeedIndicatorBar = ({ icon, label, need, level }) => {
           <Text style={styles.label}>{label}</Text>
         </View>
         <View style={styles.indicator}>
-          <View style={styles.indicatorFill} />
+          <View style={[styles.indicatorFill, { width: indicatorWidth }]} />
         </View>
       </View>
     </View>
@@ -22,11 +22,11 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 5,
+    marginVertical: 10,
   },
   icon: {
-    height: 35,
-    width: 35,
+    height: 30,
+    width: 30,
   },
   textWrapper: {
     flexDirection: 'row',
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   need: {
     fontFamily: 'Quicksand-Medium',
     fontSize: 16,
-    opacity: 0.5,
+    textTransform: 'capitalize',
   },
   indicatorWrapper: {
     flex: 1,
@@ -56,7 +56,5 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary400,
     height: 15,
     borderRadius: 15,
-    // TODO: set width based on level
-    width: '50%',
   },
 })
