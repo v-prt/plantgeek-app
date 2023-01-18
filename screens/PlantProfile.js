@@ -165,7 +165,7 @@ export const PlantProfile = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   screen: {
-    backgroundColor: COLORS.primary300,
+    backgroundColor: COLORS.primary800,
     flex: 1,
     padding: 10,
   },
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   info: {
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     padding: 20,
     borderRadius: 16,
   },
@@ -206,6 +206,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   region: {
+    color: COLORS.primary100,
     fontSize: 16,
   },
 })

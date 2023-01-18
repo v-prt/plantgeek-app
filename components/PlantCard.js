@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     padding: 10,
     borderRadius: 15,
     flexDirection: 'row',
@@ -58,13 +58,13 @@ const styles = StyleSheet.create({
     maxWidth: '60%',
   },
   title: {
-    color: COLORS.primary800,
+    color: COLORS.primary100,
     fontFamily: 'Quicksand-Bold',
     fontSize: 18,
     marginBottom: 8,
   },
   subtitle: {
-    color: COLORS.primary700,
+    color: COLORS.primary200,
     opacity: 0.7,
     // FIXME: italic not working with quicksand font
     fontStyle: 'italic',

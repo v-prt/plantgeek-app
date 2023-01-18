@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   icon: {
+    tintColor: COLORS.primary100,
     height: 30,
     width: 30,
   },
@@ -35,20 +36,23 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   label: {
+    color: COLORS.primary100,
     fontSize: 12,
-    opacity: 0.5,
+    opacity: 0.6,
+    textTransform: 'uppercase',
   },
   need: {
+    color: COLORS.primary100,
     fontFamily: 'Quicksand-Medium',
-    fontSize: 16,
     textTransform: 'capitalize',
+    fontSize: 16,
   },
   indicatorWrapper: {
     flex: 1,
     marginLeft: 10,
   },
   indicator: {
-    backgroundColor: '#eee',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     height: 15,
     borderRadius: 10,
   },

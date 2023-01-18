@@ -1,9 +1,9 @@
-import { StyleSheet, FlatList } from 'react-native'
+import { StyleSheet, FlatList, View, Text } from 'react-native'
 import { COLORS } from '../GlobalStyles'
 import { PlantCard } from './PlantCard'
 
 export const PlantList = ({ plants, infiniteScroll }) => {
-  return (
+  return plants?.length > 0 ? (
     <FlatList
       data={plants}
       renderItem={({ item }) => <PlantCard plant={item} />}
@@ -14,13 +14,27 @@ export const PlantList = ({ plants, infiniteScroll }) => {
       onEndReachedThreshold={0.5}
       onEndReached={infiniteScroll}
     />
+  ) : (
+    <View style={styles.noResultsWrapper}>
+      <Text style={styles.noResultsText}>No results.</Text>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
   list: {
-    backgroundColor: COLORS.primary300,
+    backgroundColor: COLORS.primary800,
     width: '100%',
     padding: 10,
+  },
+  noResultsWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noResultsText: {
+    color: COLORS.primary100,
+    opacity: 0.5,
+    fontSize: 16,
   },
 })

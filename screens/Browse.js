@@ -1,13 +1,21 @@
 import { useContext, useRef } from 'react'
-import { StyleSheet, SafeAreaView, View, ActivityIndicator, TextInput } from 'react-native'
+import {
+  StyleSheet,
+  SafeAreaView,
+  View,
+  ActivityIndicator,
+  TextInput,
+  Keyboard,
+} from 'react-native'
 import { useInfiniteQuery } from 'react-query'
+import { Ionicons } from '@expo/vector-icons'
 import { COLORS } from '../GlobalStyles'
 import { PlantContext } from '../contexts/PlantContext'
 import { PlantList } from '../components/PlantList'
 import { IconButton } from '../components/ui/IconButton'
 import { Formik } from 'formik'
 
-export const Browse = () => {
+export const Browse = ({ navigation }) => {
   const { formData, setFormData, fetchPlants } = useContext(PlantContext)
   const submitRef = useRef(0)
 
@@ -23,7 +31,7 @@ export const Browse = () => {
   }
 
   const handleFilterMenu = () => {
-    // TODO: open filter menu (modal)
+    navigation.navigate('Filters')
   }
 
   const handleSubmit = async values => {
@@ -42,18 +50,22 @@ export const Browse = () => {
         <Formik initialValues={formData} onSubmit={handleSubmit}>
           {({ values, setValues, setFieldValue, submitForm, resetForm }) => (
             <>
-              <TextInput
-                style={styles.searchInput}
-                placeholder='Search houseplants'
-                placeholderTextColor='#999'
-                onChangeText={e => {
-                  // TODO: show list of suggestions while typing, and allow selection from list - add functionality to able to close keyboard / cancel search
-                  setFormData({ ...formData, search: [e] })
-                  setValues({ ...values, search: [e] })
-                  submitForm()
-                }}
-                value={values.search}
-              />
+              <View style={styles.searchInputWrapper}>
+                <Ionicons name='search' size={20} color={COLORS.primary100} />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder='Search houseplants'
+                  placeholderTextColor='#999'
+                  onSubmitEditing={Keyboard.dismiss}
+                  onChangeText={e => {
+                    // TODO: show list of suggestions while typing, and allow selection from list
+                    setFormData({ ...formData, search: [e] })
+                    setValues({ ...values, search: [e] })
+                    submitForm()
+                  }}
+                  value={values.search}
+                />
+              </View>
               <IconButton icon='filter' color={COLORS.primary100} onPress={handleFilterMenu} />
             </>
           )}
@@ -65,7 +77,6 @@ export const Browse = () => {
         </View>
       )}
       {status === 'success' && (
-        // TODO: error/no results
         <PlantList
           plants={data.pages.map(group => group.plants.map(plant => plant)).flat()}
           infiniteScroll={handleScroll}
@@ -94,11 +105,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 10,
   },
-  searchInput: {
+  searchInputWrapper: {
     backgroundColor: '#444',
-    color: COLORS.primary100,
+    flexDirection: 'row',
     borderRadius: 10,
     padding: 10,
+    flex: 1,
+  },
+  searchInput: {
+    marginLeft: 8,
+    color: COLORS.primary100,
     flex: 1,
   },
 })

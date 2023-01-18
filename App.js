@@ -13,6 +13,7 @@ import { PlantProvider } from './contexts/PlantContext'
 
 import { COLORS } from './GlobalStyles'
 import { Browse } from './screens/Browse'
+import { Filters } from './screens/Filters'
 import { PlantProfile } from './screens/PlantProfile'
 import { UserProfile } from './screens/UserProfile'
 
@@ -47,6 +48,13 @@ const PlantScreens = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name='search' size={size} color={color} />
           ),
+        }}
+      />
+      <Stack.Screen
+        name='Filters'
+        component={Filters}
+        options={{
+          presentation: 'modal',
         }}
       />
       <Stack.Screen

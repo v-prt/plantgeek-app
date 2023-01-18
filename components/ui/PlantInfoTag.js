@@ -11,7 +11,7 @@ export const PlantInfoTag = ({ text }) => {
 
 const styles = StyleSheet.create({
   wrapper: {
-    backgroundColor: '#eee',
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 10,
@@ -21,6 +21,6 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: 'Quicksand-Bold',
     textTransform: 'uppercase',
-    color: '#666',
+    color: COLORS.primary100,
   },
 })
