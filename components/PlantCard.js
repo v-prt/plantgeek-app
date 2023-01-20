@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   subtitle: {
-    color: COLORS.primary200,
+    color: COLORS.primary100,
     opacity: 0.7,
     // FIXME: italic not working with quicksand font
     fontStyle: 'italic',

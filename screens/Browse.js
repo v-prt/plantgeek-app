@@ -60,10 +60,9 @@ export const Browse = ({ navigation }) => {
                   onChangeText={e => {
                     // TODO: show list of suggestions while typing, and allow selection from list
                     setFormData({ ...formData, search: [e] })
-                    setValues({ ...values, search: [e] })
                     submitForm()
                   }}
-                  value={values.search}
+                  value={formData.search}
                 />
               </View>
               <IconButton icon='filter' color={COLORS.primary100} onPress={handleFilterMenu} />

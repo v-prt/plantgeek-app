@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
+import { StyleSheet, Image } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -14,8 +15,15 @@ import { PlantProvider } from './contexts/PlantContext'
 import { COLORS } from './GlobalStyles'
 import { Browse } from './screens/Browse'
 import { Filters } from './screens/Filters'
+import { Collection } from './screens/Collection'
+import { Wishlist } from './screens/Wishlist'
 import { PlantProfile } from './screens/PlantProfile'
 import { UserProfile } from './screens/UserProfile'
+
+const searchIcon = require('./assets/images/search.png')
+const plantIcon = require('./assets/images/plant.png')
+const starIcon = require('./assets/images/star.png')
+const personIcon = require('./assets/images/person.png')
 
 const queryClient = new QueryClient()
 
@@ -117,14 +125,39 @@ export default function App() {
               },
               tabBarInactiveTintColor: COLORS.primary100,
               tabBarActiveTintColor: COLORS.primary400,
+              tabBarLabel: () => null, // hide tab labels
             }}>
             <Tab.Screen
               name='Plants'
               component={PlantScreens}
               options={{
                 headerShown: false,
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialIcons name='search' size={size} color={color} />
+                tabBarIcon: ({ focused }) => (
+                  <Image
+                    source={searchIcon}
+                    style={[styles.tabIcon, focused && styles.tabFocused]}
+                  />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name='Collection'
+              component={Collection}
+              options={{
+                tabBarIcon: ({ focused }) => (
+                  <Image
+                    source={plantIcon}
+                    style={[styles.tabIcon, focused && styles.tabFocused]}
+                  />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name='Wishlist'
+              component={Wishlist}
+              options={{
+                tabBarIcon: ({ focused }) => (
+                  <Image source={starIcon} style={[styles.tabIcon, focused && styles.tabFocused]} />
                 ),
               }}
             />
@@ -132,8 +165,11 @@ export default function App() {
               name='UserProfile'
               component={UserProfile}
               options={{
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialIcons name='account-circle' size={size} color={color} />
+                tabBarIcon: ({ focused }) => (
+                  <Image
+                    source={personIcon}
+                    style={[styles.tabIcon, focused && styles.tabFocused]}
+                  />
                 ),
               }}
             />
@@ -143,3 +179,14 @@ export default function App() {
     </NavigationContainer>
   )
 }
+
+const styles = StyleSheet.create({
+  tabIcon: {
+    width: 30,
+    height: 30,
+    tintColor: COLORS.primary100,
+  },
+  tabFocused: {
+    tintColor: COLORS.primary400,
+  },
+})
