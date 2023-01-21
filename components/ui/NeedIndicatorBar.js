@@ -36,13 +36,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   label: {
-    color: COLORS.primary100,
     fontSize: 12,
     opacity: 0.6,
     textTransform: 'uppercase',
   },
   need: {
-    color: COLORS.primary100,
     fontFamily: 'Quicksand-Medium',
     textTransform: 'capitalize',
     fontSize: 16,

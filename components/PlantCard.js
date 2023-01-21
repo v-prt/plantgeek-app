@@ -58,15 +58,11 @@ const styles = StyleSheet.create({
     maxWidth: '60%',
   },
   title: {
-    color: COLORS.primary100,
     fontFamily: 'Quicksand-Bold',
     fontSize: 18,
     marginBottom: 8,
   },
   subtitle: {
-    color: COLORS.primary100,
     opacity: 0.7,
-    // FIXME: italic not working with quicksand font
-    fontStyle: 'italic',
   },
 })

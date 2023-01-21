@@ -21,6 +21,5 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: 'Quicksand-Bold',
     textTransform: 'uppercase',
-    color: COLORS.primary100,
   },
 })

@@ -3,7 +3,7 @@ import { StyleSheet, Pressable, Text } from 'react-native'
 import { COLORS } from '../../GlobalStyles'
 import { PlantContext } from '../../contexts/PlantContext'
 
-export const FilterOption = ({ filter, label, value }) => {
+export const FilterOption = ({ filter, label, value, firstChild, lastChild }) => {
   const { formData, setFormData } = useContext(PlantContext)
   const [selected, setSelected] = useState(formData[filter]?.includes(value) || false)
 
@@ -20,7 +20,14 @@ export const FilterOption = ({ filter, label, value }) => {
   }, [formData])
 
   return (
-    <Pressable style={[styles.button, selected && styles.selectedButton]} onPress={handlePress}>
+    <Pressable
+      style={[
+        styles.button,
+        firstChild && styles.firstChild,
+        lastChild && styles.lastChild,
+        selected && styles.selectedButton,
+      ]}
+      onPress={handlePress}>
       <Text style={[styles.text, selected && styles.selectedText]}>{label}</Text>
     </Pressable>
   )
@@ -35,14 +42,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 10,
     margin: 5,
+    opacity: 0.6,
+  },
+  firstChild: {
+    marginLeft: 20,
+  },
+  lastChild: {
+    marginRight: 20,
   },
   text: {
     fontFamily: 'Quicksand-Bold',
-    color: COLORS.primary100,
   },
   selectedButton: {
     backgroundColor: COLORS.primary400,
     borderColor: COLORS.primary400,
+    opacity: 1,
   },
   selectedText: {
     color: COLORS.primary800,

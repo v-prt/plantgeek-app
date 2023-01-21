@@ -1,9 +1,9 @@
-import { useContext, useRef } from 'react'
+import { useContext, useRef, useState } from 'react'
 import {
   StyleSheet,
+  ActivityIndicator,
   SafeAreaView,
   View,
-  ActivityIndicator,
   TextInput,
   Keyboard,
 } from 'react-native'
@@ -11,6 +11,7 @@ import { useInfiniteQuery } from 'react-query'
 import { Ionicons } from '@expo/vector-icons'
 import { COLORS } from '../GlobalStyles'
 import { PlantContext } from '../contexts/PlantContext'
+import { DynamicHeader } from '../components/ui/DynamicHeader'
 import { PlantList } from '../components/PlantList'
 import { IconButton } from '../components/ui/IconButton'
 import { Formik } from 'formik'
@@ -18,22 +19,17 @@ import { Formik } from 'formik'
 export const Browse = ({ navigation }) => {
   const { formData, setFormData, fetchPlants } = useContext(PlantContext)
   const submitRef = useRef(0)
+  const [scrolledPastTop, setScrolledPastTop] = useState(false)
 
-  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } =
-    useInfiniteQuery(['plants', formData], fetchPlants, {
-      getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-    })
-
-  const handleScroll = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery(
+    ['plants', formData],
+    fetchPlants,
+    {
+      getNextPageParam: lastPage => lastPage.nextCursor,
     }
-  }
+  )
 
-  const handleFilterMenu = () => {
-    navigation.navigate('Filters')
-  }
-
+  // search plants based on input
   const handleSubmit = async values => {
     submitRef.current++
     const thisSubmit = submitRef.current
@@ -44,11 +40,32 @@ export const Browse = ({ navigation }) => {
     }, 400)
   }
 
+  // animate header based on scroll position
+  const handleScroll = e => {
+    if (e.nativeEvent.contentOffset.y > 60) {
+      setScrolledPastTop(true)
+    } else {
+      setScrolledPastTop(false)
+    }
+  }
+
+  // fetch more plants when scrolled to end
+  const handleInfiniteScroll = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }
+
+  const handleFilterMenu = () => {
+    navigation.navigate('Filter')
+  }
+
   return (
     <SafeAreaView style={styles.screen}>
+      <DynamicHeader scrolledPastTop={scrolledPastTop} />
       <View style={styles.searchBar}>
         <Formik initialValues={formData} onSubmit={handleSubmit}>
-          {({ values, setValues, setFieldValue, submitForm, resetForm }) => (
+          {({ submitForm }) => (
             <>
               <View style={styles.searchInputWrapper}>
                 <Ionicons name='search' size={20} color={COLORS.primary100} />
@@ -78,7 +95,8 @@ export const Browse = ({ navigation }) => {
       {status === 'success' && (
         <PlantList
           plants={data.pages.map(group => group.plants.map(plant => plant)).flat()}
-          infiniteScroll={handleScroll}
+          handleScroll={handleScroll}
+          infiniteScroll={handleInfiniteScroll}
         />
       )}
     </SafeAreaView>

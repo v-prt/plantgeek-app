@@ -12,3 +12,11 @@ export const COLORS = {
   error: '#cc0000',
   warning: '#ff6b00',
 }
+
+// app-wide font / text style
+export const customTextProps = {
+  style: {
+    fontFamily: 'Quicksand-Regular',
+    color: COLORS.primary100,
+  },
+}

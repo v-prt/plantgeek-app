@@ -206,7 +206,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   region: {
-    color: COLORS.primary100,
     fontSize: 16,
   },
 })

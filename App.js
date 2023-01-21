@@ -1,20 +1,21 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, Image } from 'react-native'
+import { StyleSheet, Image, Text } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { MaterialIcons } from '@expo/vector-icons'
-import { useFonts } from 'expo-font'
+import { useFonts } from './hooks/useFonts'
+
 import * as SplashScreen from 'expo-splash-screen'
 import { setCustomText } from 'react-native-global-props'
 
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { PlantProvider } from './contexts/PlantContext'
 
-import { COLORS } from './GlobalStyles'
+import { COLORS, customTextProps } from './GlobalStyles'
 import { Browse } from './screens/Browse'
-import { Filters } from './screens/Filters'
+import { Filter } from './screens/Filter'
 import { Collection } from './screens/Collection'
 import { Wishlist } from './screens/Wishlist'
 import { PlantProfile } from './screens/PlantProfile'
@@ -59,9 +60,12 @@ const PlantScreens = () => {
         }}
       />
       <Stack.Screen
-        name='Filters'
-        component={Filters}
+        name='Filter'
+        component={Filter}
         options={{
+          headerStyle: {
+            backgroundColor: '#222',
+          },
           presentation: 'modal',
         }}
       />
@@ -77,18 +81,15 @@ const PlantScreens = () => {
 }
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
-    'Quicksand-Regular': require('./assets/fonts/Quicksand-Regular.ttf'),
-    'Quicksand-Medium': require('./assets/fonts/Quicksand-Medium.ttf'),
-    'Quicksand-Bold': require('./assets/fonts/Quicksand-Bold.ttf'),
-  })
+  const [appReady, setAppReady] = useState(false)
 
-  // app-wide font / text style
-  const customTextProps = {
-    style: {
-      fontFamily: 'Quicksand-Regular',
-    },
-  }
+  useEffect(() => {
+    const loadFonts = async () => {
+      await useFonts()
+      setAppReady(true)
+    }
+    loadFonts()
+  }, [])
 
   useEffect(() => {
     const prepare = async () => {
@@ -97,13 +98,13 @@ export default function App() {
       await SplashScreen.hideAsync()
     }
 
-    if (fontsLoaded) {
+    if (appReady) {
       prepare()
       setCustomText(customTextProps)
     }
-  }, [fontsLoaded])
+  }, [appReady])
 
-  if (!fontsLoaded) {
+  if (!appReady) {
     return null
   }
 

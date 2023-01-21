@@ -2,7 +2,7 @@ import { StyleSheet, FlatList, View, Text } from 'react-native'
 import { COLORS } from '../GlobalStyles'
 import { PlantCard } from './PlantCard'
 
-export const PlantList = ({ plants, infiniteScroll }) => {
+export const PlantList = ({ plants, handleScroll, infiniteScroll }) => {
   return plants?.length > 0 ? (
     <FlatList
       data={plants}
@@ -13,6 +13,7 @@ export const PlantList = ({ plants, infiniteScroll }) => {
       contentContainerStyle={{ paddingBottom: 10 }}
       onEndReachedThreshold={0.5}
       onEndReached={infiniteScroll}
+      onScroll={handleScroll}
     />
   ) : (
     <View style={styles.noResultsWrapper}>
@@ -33,7 +34,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   noResultsText: {
-    color: COLORS.primary100,
     opacity: 0.5,
     fontSize: 16,
   },
