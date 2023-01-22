@@ -1,10 +1,11 @@
-import { useContext, useRef, useState } from 'react'
+import { useContext, useState } from 'react'
 import {
   StyleSheet,
   ActivityIndicator,
   SafeAreaView,
   View,
   TextInput,
+  Pressable,
   Keyboard,
 } from 'react-native'
 import { useInfiniteQuery } from 'react-query'
@@ -13,13 +14,13 @@ import { COLORS } from '../GlobalStyles'
 import { PlantContext } from '../contexts/PlantContext'
 import { DynamicHeader } from '../components/ui/DynamicHeader'
 import { PlantList } from '../components/PlantList'
+import { SearchList } from '../components/SearchList'
 import { IconButton } from '../components/ui/IconButton'
-import { Formik } from 'formik'
 
 export const Browse = ({ navigation }) => {
   const { formData, setFormData, fetchPlants } = useContext(PlantContext)
-  const submitRef = useRef(0)
   const [scrolledPastTop, setScrolledPastTop] = useState(false)
+  const [searchVal, setSearchVal] = useState(null)
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery(
     ['plants', formData],
@@ -29,15 +30,9 @@ export const Browse = ({ navigation }) => {
     }
   )
 
-  // search plants based on input
-  const handleSubmit = async values => {
-    submitRef.current++
-    const thisSubmit = submitRef.current
-    setTimeout(() => {
-      if (thisSubmit === submitRef.current) {
-        setFormData({ ...formData, ...values })
-      }
-    }, 400)
+  const handleClearSearch = () => {
+    setSearchVal(null)
+    setFormData({ ...formData, search: null })
   }
 
   // animate header based on scroll position
@@ -64,40 +59,51 @@ export const Browse = ({ navigation }) => {
     <SafeAreaView style={styles.screen}>
       <DynamicHeader scrolledPastTop={scrolledPastTop} />
       <View style={styles.searchBar}>
-        <Formik initialValues={formData} onSubmit={handleSubmit}>
-          {({ submitForm }) => (
-            <>
-              <View style={styles.searchInputWrapper}>
-                <Ionicons name='search' size={20} color={COLORS.primary100} />
-                <TextInput
-                  style={styles.searchInput}
-                  placeholder='Search houseplants'
-                  placeholderTextColor='#999'
-                  onSubmitEditing={Keyboard.dismiss}
-                  onChangeText={e => {
-                    // TODO: show list of suggestions while typing, and allow selection from list
-                    setFormData({ ...formData, search: [e] })
-                    submitForm()
-                  }}
-                  value={formData.search}
-                />
-              </View>
-              <IconButton icon='filter' color={COLORS.primary100} onPress={handleFilterMenu} />
-            </>
+        <View style={styles.searchInputWrapper}>
+          <Ionicons name='search' size={20} color={COLORS.primary100} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder='Search houseplants'
+            placeholderTextColor='#999'
+            onBlur={Keyboard.dismiss}
+            onChangeText={e => {
+              if (e === '') {
+                setFormData({ ...formData, search: null })
+              }
+              setSearchVal(e)
+            }}
+            value={searchVal || formData?.search?.[0] || ''}
+          />
+          {(searchVal || formData?.search?.[0]) && (
+            <Pressable onPress={handleClearSearch}>
+              <Ionicons name='close' size={20} color={COLORS.primary100} />
+            </Pressable>
           )}
-        </Formik>
-      </View>
-      {status === 'loading' && (
-        <View style={styles.loading}>
-          <ActivityIndicator size='large' color={COLORS.primary100} />
         </View>
-      )}
-      {status === 'success' && (
-        <PlantList
-          plants={data.pages.map(group => group.plants.map(plant => plant)).flat()}
-          handleScroll={handleScroll}
-          infiniteScroll={handleInfiniteScroll}
+        <IconButton icon='filter' color={COLORS.primary100} onPress={handleFilterMenu} />
+      </View>
+      {searchVal ? (
+        <SearchList
+          searchVal={searchVal}
+          setSearchVal={setSearchVal}
+          formData={formData}
+          setFormData={setFormData}
         />
+      ) : (
+        <>
+          {status === 'loading' && (
+            <View style={styles.loading}>
+              <ActivityIndicator size='large' color={COLORS.primary100} />
+            </View>
+          )}
+          {status === 'success' && (
+            <PlantList
+              plants={data.pages.map(group => group.plants.map(plant => plant)).flat()}
+              handleScroll={handleScroll}
+              infiniteScroll={handleInfiniteScroll}
+            />
+          )}
+        </>
       )}
     </SafeAreaView>
   )
