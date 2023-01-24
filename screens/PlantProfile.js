@@ -42,8 +42,8 @@ export const PlantProfile = ({ route, navigation }) => {
     if (need === 'high') return '100%'
 
     // temperature
-    if (need === 'average') return '25%'
-    if (need === 'above average') return '75%'
+    if (need === 'average') return '40%'
+    if (need === 'above average') return '60%'
   }
 
   // setting plant care difficulty

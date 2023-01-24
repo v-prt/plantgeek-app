@@ -65,6 +65,7 @@ export const Browse = ({ navigation }) => {
             style={styles.searchInput}
             placeholder='Search houseplants'
             placeholderTextColor='#999'
+            selectionColor={COLORS.primary400}
             onBlur={Keyboard.dismiss}
             onChangeText={e => {
               if (e === '') {
@@ -136,8 +137,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchInput: {
-    marginLeft: 8,
     color: COLORS.primary100,
+    marginLeft: 8,
     flex: 1,
   },
 })
