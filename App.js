@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { setCustomText } from 'react-native-global-props'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import * as SplashScreen from 'expo-splash-screen'
 import { useFonts } from './hooks/useFonts'
+import { UserContext, UserProvider } from './contexts/UserContext'
 import { AuthenticatedStack } from './stacks/AuthenticatedStack'
 import { UnauthenticatedStack } from './stacks/UnauthenticatedStack'
 import { COLORS, customTextProps } from './GlobalStyles'
@@ -12,9 +13,12 @@ const queryClient = new QueryClient()
 
 SplashScreen.preventAutoHideAsync()
 
+const Root = () => {
+  const { authenticated } = useContext(UserContext)
+  return authenticated ? <AuthenticatedStack /> : <UnauthenticatedStack />
+}
+
 export default function App() {
-  // TODO: check for token and set authenticated state
-  const [authenticated, setAuthenticated] = useState(false)
   const [appReady, setAppReady] = useState(false)
 
   useEffect(() => {
@@ -50,7 +54,9 @@ export default function App() {
         },
       }}>
       <QueryClientProvider client={queryClient}>
-        {authenticated ? <AuthenticatedStack /> : <UnauthenticatedStack />}
+        <UserProvider>
+          <Root />
+        </UserProvider>
       </QueryClientProvider>
     </NavigationContainer>
   )

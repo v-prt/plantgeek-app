@@ -1,24 +1,33 @@
-import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native'
+import { useContext } from 'react'
+import { StyleSheet, View, Alert, KeyboardAvoidingView, Platform } from 'react-native'
 import * as yup from 'yup'
 import { Formik } from 'formik'
+import { UserContext } from '../contexts/UserContext'
 import { COLORS } from '../GlobalStyles'
 import { Input } from '../components/ui/Input'
 import { FormItem } from '../components/ui/FormItem'
 import { TextButton } from '../components/ui/TextButton'
 
 export const Login = ({ navigation }) => {
+  const { handleLogin } = useContext(UserContext)
+
   const validationSchema = yup.object().shape({
-    email: yup.string().required('Required'),
+    username: yup.string().required('Required'),
     password: yup.string().required('Required'),
   })
 
   const initialValues = {
-    email: '',
+    username: '',
     password: '',
   }
 
-  const handleLogin = async ({ email, password }) => {
-    // TODO: send login request and handle response & errors
+  const loginHandler = async values => {
+    const result = await handleLogin(values)
+    if (result.error) {
+      Alert.alert('Invalid Credentials', result.error.message)
+    } else {
+      // TODO: fix button to not show text again (stay loading or change to checkmark), briefly show success status and smoothly animate moving to home screen after login
+    }
   }
 
   return (
@@ -30,7 +39,7 @@ export const Login = ({ navigation }) => {
         initialValues={initialValues}
         validateOnBlur={false}
         validateOnChange={false}
-        onSubmit={handleLogin}>
+        onSubmit={loginHandler}>
         {({ handleChange, handleBlur, handleSubmit, values, isSubmitting }) => (
           <>
             <FormItem name='username' label='Email or username'>
