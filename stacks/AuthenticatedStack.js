@@ -1,4 +1,4 @@
-import { StyleSheet, Image } from 'react-native'
+import { StyleSheet, Image, Text } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -22,22 +22,23 @@ const personIcon = require('../assets/images/person.png')
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 
-const PlantScreens = () => {
+const stackScreenOptions = {
+  headerStyle: {
+    backgroundColor: COLORS.primary800,
+  },
+  headerTintColor: COLORS.primary100,
+  headerShadowVisible: false,
+  tabBarStyle: {
+    backgroundColor: COLORS.primary800,
+    borderTopWidth: 0,
+  },
+  tabBarInactiveTintColor: COLORS.primary100,
+  tabBarActiveTintColor: COLORS.primary400,
+}
+
+const BrowseStack = () => {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: COLORS.primary800,
-        },
-        headerTintColor: COLORS.primary100,
-        headerShadowVisible: false,
-        tabBarStyle: {
-          backgroundColor: COLORS.primary800,
-          borderTopWidth: 0,
-        },
-        tabBarInactiveTintColor: COLORS.primary100,
-        tabBarActiveTintColor: COLORS.primary400,
-      }}>
+    <Stack.Navigator screenOptions={stackScreenOptions}>
       <Stack.Screen
         name='Browse'
         component={Browse}
@@ -56,6 +57,54 @@ const PlantScreens = () => {
             backgroundColor: '#222',
           },
           presentation: 'modal',
+        }}
+      />
+      <Stack.Screen
+        name='PlantProfile'
+        component={PlantProfile}
+        options={{
+          title: '',
+        }}
+      />
+    </Stack.Navigator>
+  )
+}
+
+const CollectionStack = () => {
+  return (
+    <Stack.Navigator screenOptions={stackScreenOptions}>
+      <Stack.Screen
+        name='Collection'
+        component={Collection}
+        options={{
+          headerStyle: {
+            backgroundColor: COLORS.primary600,
+          },
+          headerTitle: () => <Text style={styles.headerTitle}>My Collection</Text>,
+        }}
+      />
+      <Stack.Screen
+        name='PlantProfile'
+        component={PlantProfile}
+        options={{
+          title: '',
+        }}
+      />
+    </Stack.Navigator>
+  )
+}
+
+const WishlistStack = () => {
+  return (
+    <Stack.Navigator screenOptions={stackScreenOptions}>
+      <Stack.Screen
+        name='Wishlist'
+        component={Wishlist}
+        options={{
+          headerStyle: {
+            backgroundColor: COLORS.primary600,
+          },
+          headerTitle: () => <Text style={styles.headerTitle}>My Wishlist</Text>,
         }}
       />
       <Stack.Screen
@@ -90,7 +139,7 @@ export const AuthenticatedStack = () => {
         }}>
         <Tab.Screen
           name='Plants'
-          component={PlantScreens}
+          component={BrowseStack}
           options={{
             headerShown: false,
             tabBarIcon: ({ focused }) => (
@@ -99,18 +148,20 @@ export const AuthenticatedStack = () => {
           }}
         />
         <Tab.Screen
-          name='Collection'
-          component={Collection}
+          name='CollectionStack'
+          component={CollectionStack}
           options={{
+            headerShown: false,
             tabBarIcon: ({ focused }) => (
               <Image source={plantIcon} style={[styles.tabIcon, focused && styles.tabFocused]} />
             ),
           }}
         />
         <Tab.Screen
-          name='Wishlist'
-          component={Wishlist}
+          name='WishlistStack'
+          component={WishlistStack}
           options={{
+            headerShown: false,
             tabBarIcon: ({ focused }) => (
               <Image source={starIcon} style={[styles.tabIcon, focused && styles.tabFocused]} />
             ),
@@ -131,6 +182,10 @@ export const AuthenticatedStack = () => {
 }
 
 const styles = StyleSheet.create({
+  headerTitle: {
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 20,
+  },
   tabIcon: {
     width: 30,
     height: 30,

@@ -8,16 +8,12 @@ import axios from 'axios'
 import { NeedIndicatorBar } from '../components/ui/NeedIndicatorBar'
 import { PlantInfoTag } from '../components/ui/PlantInfoTag'
 
-export const PlantProfile = ({ route, navigation }) => {
-  const { slug, name } = route.params
+export const PlantProfile = ({ route }) => {
+  const { slug } = route.params
   const [difficulty, setDifficulty] = useState()
   const [toxicity, setToxicity] = useState()
   const [climate, setClimate] = useState()
   const [rarity, setRarity] = useState()
-
-  useEffect(() => {
-    navigation.setOptions({ title: name })
-  }, [name])
 
   const { data: plant, status } = useQuery(['plant', slug], async () => {
     try {
@@ -105,6 +101,7 @@ export const PlantProfile = ({ route, navigation }) => {
   return (
     <ScrollView
       style={styles.screen}
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={{
         alignItems: 'center',
         justifyContent: 'center',

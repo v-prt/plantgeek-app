@@ -6,7 +6,7 @@ export const PlantCard = ({ plant }) => {
   const navigation = useNavigation()
 
   const handlePress = () => {
-    navigation.navigate('PlantProfile', { slug: plant.slug, name: plant.primaryName })
+    navigation.navigate('PlantProfile', { slug: plant.slug })
   }
 
   return (

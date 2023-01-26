@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from 'react'
+import { useQuery } from 'react-query'
 import axios from 'axios'
 import { API_URL } from '../constants'
 import * as SecureStore from 'expo-secure-store'
@@ -16,6 +17,16 @@ export const UserContext = createContext(null)
 export const UserProvider = ({ children }) => {
   const [token, setToken] = useState(null)
   const [currentUserId, setCurrentUserId] = useState(null)
+
+  const { data: currentUser, status: userStatus } = useQuery(
+    ['current-user', currentUserId],
+    async () => {
+      if (currentUserId) {
+        const { data } = await axios.get(`${API_URL}/users/${currentUserId}`)
+        return data.user
+      } else return null
+    }
+  )
 
   useEffect(() => {
     const getToken = async () => {
@@ -71,6 +82,9 @@ export const UserProvider = ({ children }) => {
     <UserContext.Provider
       value={{
         token,
+        currentUserId,
+        currentUser,
+        userStatus,
         handleLogin,
         handleLogout,
         authenticated: !!currentUserId,
