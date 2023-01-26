@@ -99,17 +99,21 @@ export const PlantProfile = ({ route }) => {
   }, [plant])
 
   return (
-    <ScrollView
-      style={styles.screen}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingBottom: 20,
-      }}>
-      {status === 'loading' && <ActivityIndicator size='large' color={COLORS.primary100} />}
+    <>
+      {status === 'loading' && (
+        <View style={styles.loadingScreen}>
+          <ActivityIndicator size='large' color={COLORS.primary100} />
+        </View>
+      )}
       {status === 'success' && plant && (
-        <>
+        <ScrollView
+          style={styles.screen}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingBottom: 20,
+          }}>
           <LinearGradient
             style={styles.header}
             colors={['#a4e17d', '#95d190']}
@@ -154,13 +158,20 @@ export const PlantProfile = ({ route }) => {
             </View>
             <Text style={styles.region}>Region of origin: {plant.region || 'Unknown'}</Text>
           </View>
-        </>
+        </ScrollView>
       )}
-    </ScrollView>
+    </>
   )
 }
 
 const styles = StyleSheet.create({
+  loadingScreen: {
+    backgroundColor: COLORS.primary800,
+    flex: 1,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   screen: {
     backgroundColor: COLORS.primary800,
     flex: 1,
