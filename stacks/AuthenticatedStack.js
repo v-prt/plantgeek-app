@@ -12,7 +12,10 @@ import { Filter } from '../screens/Filter'
 import { PlantProfile } from '../screens/PlantProfile'
 import { Collection } from '../screens/Collection'
 import { Wishlist } from '../screens/Wishlist'
+import { Contributions } from '../screens/Contributions'
 import { UserProfile } from '../screens/UserProfile'
+import { Settings } from '../screens/Settings'
+import { IconButton } from '../components/ui/IconButton'
 
 const searchIcon = require('../assets/images/search.png')
 const plantIcon = require('../assets/images/plant.png')
@@ -78,7 +81,7 @@ const CollectionStack = () => {
         component={Collection}
         options={{
           headerStyle: {
-            backgroundColor: COLORS.primary600,
+            backgroundColor: '#222',
           },
           headerTitle: () => <Text style={styles.headerTitle}>My Collection</Text>,
         }}
@@ -102,7 +105,7 @@ const WishlistStack = () => {
         component={Wishlist}
         options={{
           headerStyle: {
-            backgroundColor: COLORS.primary600,
+            backgroundColor: '#222',
           },
           headerTitle: () => <Text style={styles.headerTitle}>My Wishlist</Text>,
         }}
@@ -112,6 +115,70 @@ const WishlistStack = () => {
         component={PlantProfile}
         options={{
           title: '',
+        }}
+      />
+    </Stack.Navigator>
+  )
+}
+
+const ContributionsStack = () => {
+  return (
+    <Stack.Navigator screenOptions={stackScreenOptions}>
+      <Stack.Screen
+        name='Contributions'
+        component={Contributions}
+        options={{
+          headerStyle: {
+            backgroundColor: '#222',
+          },
+          headerTitle: () => <Text style={styles.headerTitle}>My Contributions</Text>,
+        }}
+      />
+      <Stack.Screen
+        name='PlantProfile'
+        component={PlantProfile}
+        options={{
+          title: '',
+        }}
+      />
+    </Stack.Navigator>
+  )
+}
+
+const ProfileStack = () => {
+  return (
+    <Stack.Navigator screenOptions={stackScreenOptions}>
+      <Stack.Screen
+        name='UserProfile'
+        component={UserProfile}
+        options={({ navigation }) => ({
+          headerStyle: {
+            backgroundColor: '#222',
+          },
+          headerTitle: () => <Text style={styles.headerTitle}>My Profile</Text>,
+          headerLeft: ({ tintColor }) => (
+            <IconButton
+              icon='settings'
+              color={tintColor}
+              onPress={() => {
+                navigation.navigate('Settings')
+              }}
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
+        name='ContributionsStack'
+        component={ContributionsStack}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name='Settings'
+        component={Settings}
+        options={{
+          presentation: 'modal',
         }}
       />
     </Stack.Navigator>
@@ -168,9 +235,10 @@ export const AuthenticatedStack = () => {
           }}
         />
         <Tab.Screen
-          name='UserProfile'
-          component={UserProfile}
+          name='ProfileStack'
+          component={ProfileStack}
           options={{
+            headerShown: false,
             tabBarIcon: ({ focused }) => (
               <Image source={personIcon} style={[styles.tabIcon, focused && styles.tabFocused]} />
             ),

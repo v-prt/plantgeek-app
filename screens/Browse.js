@@ -81,7 +81,7 @@ export const Browse = ({ navigation }) => {
             </Pressable>
           )}
         </View>
-        <IconButton icon='filter' color={COLORS.primary100} onPress={handleFilterMenu} />
+        <IconButton icon='filter-list' color={COLORS.primary100} onPress={handleFilterMenu} />
       </View>
       {searchVal ? (
         <SearchList

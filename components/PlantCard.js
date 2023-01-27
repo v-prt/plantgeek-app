@@ -17,7 +17,7 @@ export const PlantCard = ({ plant }) => {
         <Image source={{ uri: plant.imageUrl }} style={styles.image} />
         <View style={styles.info}>
           <Text style={styles.title}>{plant.primaryName}</Text>
-          <Text style={styles.subtitle}>{plant.secondaryName}</Text>
+          {plant.secondaryName && <Text style={styles.subtitle}>{plant.secondaryName}</Text>}
         </View>
       </Pressable>
     </View>
@@ -60,9 +60,9 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: 'Quicksand-Bold',
     fontSize: 18,
-    marginBottom: 8,
   },
   subtitle: {
     opacity: 0.7,
+    marginTop: 8,
   },
 })
