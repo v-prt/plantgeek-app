@@ -10,7 +10,7 @@ export const Input = ({ config }) => {
 const styles = StyleSheet.create({
   input: {
     backgroundColor: '#444',
-    color: COLORS.primary100,
+    color: '#fff',
     borderRadius: 10,
     padding: 10,
     fontSize: 16,

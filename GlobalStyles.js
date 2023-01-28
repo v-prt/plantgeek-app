@@ -8,9 +8,9 @@ export const COLORS = {
   primary200: '#d6ffda',
   primary100: '#e5efdc',
 
-  accent: '#966fd1',
-  error: '#cc0000',
-  warning: '#ff6b00',
+  accent: '#ab8bda',
+  error: '#ff6666',
+  warning: '#ffc966',
 }
 
 // app-wide font / text style

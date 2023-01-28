@@ -2,12 +2,14 @@ import { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Pressable, Text } from 'react-native'
 import { COLORS } from '../../GlobalStyles'
 import { PlantContext } from '../../contexts/PlantContext'
+import * as Haptics from 'expo-haptics'
 
 export const FilterOption = ({ filter, label, value, firstChild, lastChild }) => {
   const { formData, setFormData } = useContext(PlantContext)
   const [selected, setSelected] = useState(formData[filter]?.includes(value) || false)
 
   const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     if (selected) {
       setFormData({ ...formData, [filter]: formData[filter]?.filter(item => item !== value) })
     } else {

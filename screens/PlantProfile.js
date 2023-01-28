@@ -7,6 +7,7 @@ import { API_URL } from '../constants'
 import axios from 'axios'
 import { NeedIndicatorBar } from '../components/ui/NeedIndicatorBar'
 import { PlantInfoTag } from '../components/ui/PlantInfoTag'
+import { PlantActions } from '../components/PlantActions'
 
 export const PlantProfile = ({ route }) => {
   const { slug } = route.params
@@ -158,6 +159,7 @@ export const PlantProfile = ({ route }) => {
             </View>
             <Text style={styles.region}>Region of origin: {plant.region || 'Unknown'}</Text>
           </View>
+          <PlantActions plant={plant} />
         </ScrollView>
       )}
     </>

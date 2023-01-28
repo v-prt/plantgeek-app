@@ -1,31 +1,56 @@
+import { useContext } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import { Formik } from 'formik'
 import * as yup from 'yup'
 import { COLORS } from '../GlobalStyles'
+import { UserContext } from '../contexts/UserContext'
 import { Input } from '../components/ui/Input'
 import { FormItem } from '../components/ui/FormItem'
 import { TextButton } from '../components/ui/TextButton'
+import { AlertText } from '../components/ui/AlertText'
 
 export const Signup = ({ navigation }) => {
+  const { handleSignup } = useContext(UserContext)
+
   const validationSchema = yup.object().shape({
-    firstName: yup.string(),
-    lastName: yup.string(),
-    username: yup.string().required('Required').min(4, 'Username must be at least 4 characters'),
-    email: yup.string().required('Required').email('Invalid email'),
-    password: yup.string().required('Required').min(6, 'Passwords must be at least 6 characters'),
+    firstName: yup
+      .string()
+      .min(2, `That's too short`)
+      .max(30, `That's too long`)
+      .required('Required'),
+    lastName: yup
+      .string()
+      .min(2, `That's too short`)
+      .max(30, `That's too long`)
+      .required('Required'),
+    email: yup.string().email('Invalid email').required('Required'),
+    username: yup
+      .string()
+      .min(4, `That's too short`)
+      .max(20, `That's too long`)
+      .required('Required')
+      .matches(/^[a-zA-Z0-9]+$/, 'No special characters or spaces allowed'),
+    password: yup.string().min(6, `That's too short`).required('Required'),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref('password'), null], 'Passwords must match')
+      .required('Required'),
   })
 
   const initialValues = {
     firstName: '',
     lastName: '',
-    username: '',
     email: '',
+    username: '',
     password: '',
   }
 
-  const handleSignup = async values => {
-    // TODO: send signup request and handle response & errors
+  const signupHandler = async (values, { setStatus }) => {
+    const result = await handleSignup(values)
+    if (result.error) {
+      setStatus(result.error.message)
+    }
   }
 
   return (
@@ -37,9 +62,17 @@ export const Signup = ({ navigation }) => {
         initialValues={initialValues}
         validateOnBlur={false}
         validateOnChange={false}
-        onSubmit={handleSignup}>
-        {({ handleChange, handleBlur, handleSubmit, values, isSubmitting }) => (
+        onSubmit={signupHandler}>
+        {({ handleChange, handleBlur, handleSubmit, values, status, isSubmitting }) => (
           <>
+            {status && (
+              <AlertText
+                type='error'
+                icon='error'
+                title={`Couldn't create account`}
+                subtitle={status}
+              />
+            )}
             <View style={styles.formRow}>
               <FormItem name='firstName' label='First name' style={styles.rowItem}>
                 <Input
@@ -87,7 +120,15 @@ export const Signup = ({ navigation }) => {
                   onBlur: handleBlur('password'),
                   onChangeText: handleChange('password'),
                   value: values.password,
-                  secureTextEntry: true,
+                }}
+              />
+            </FormItem>
+            <FormItem name='confirmPassword' label='Confirm password'>
+              <Input
+                config={{
+                  onBlur: handleBlur('confirmPassword'),
+                  onChangeText: handleChange('confirmPassword'),
+                  value: values.confirmPassword,
                 }}
               />
             </FormItem>

@@ -17,7 +17,7 @@ export const FormItem = ({ name, label, sublabel, subtext, style, children }) =>
               name={name}
               render={msg => (
                 <View style={styles.errorTextWrapper}>
-                  <MaterialIcons name='error-outline' size={14} color='red' />
+                  <MaterialIcons name='error-outline' size={14} color={COLORS.error} />
                   <Text style={styles.errorText}>{msg}</Text>
                 </View>
               )}
@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 16,
     fontFamily: 'Quicksand-Bold',
+    opacity: 0.6,
   },
   sublabel: {
     opacity: 0.5,
@@ -51,6 +52,7 @@ const styles = StyleSheet.create({
   },
   error: {
     color: COLORS.error,
+    opacity: 1,
   },
   errorText: {
     fontSize: 14,

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { StyleSheet, ScrollView, Pressable, View, Text, Keyboard } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-
 import { Ionicons } from '@expo/vector-icons'
 import { COLORS } from '../GlobalStyles'
+import * as Haptics from 'expo-haptics'
 
 export const SearchList = ({ searchVal, setSearchVal, formData, setFormData }) => {
   // TODO: fade in/out animation?
@@ -62,6 +62,7 @@ export const SearchList = ({ searchVal, setSearchVal, formData, setFormData }) =
   }, [searchVal])
 
   const handleClearRecentSearches = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
     await AsyncStorage.removeItem('recentSearches')
     setRecentSearches([])
   }
@@ -91,6 +92,7 @@ export const SearchList = ({ searchVal, setSearchVal, formData, setFormData }) =
         key={index}
         style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
           // save new recent searches to local storage, limit to last 10 searches
           // FIXME: improve this to not save duplicates
           AsyncStorage.setItem(

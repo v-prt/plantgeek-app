@@ -3,11 +3,13 @@ import { StyleSheet, Pressable, Text, View, ScrollView, ActivityIndicator } from
 import { COLORS } from '../GlobalStyles'
 import { FilterOption } from '../components/ui/FilterOption'
 import { PlantContext } from '../contexts/PlantContext'
+import * as Haptics from 'expo-haptics'
 
 export const Filter = ({ navigation }) => {
   const { fetching, totalResults, setFormData } = useContext(PlantContext)
 
   const clearFilters = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
     setFormData({ sort: 'name-asc' })
   }
 

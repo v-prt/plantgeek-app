@@ -11,7 +11,11 @@ export const UserProfile = ({ navigation }) => {
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
-        <Image style={styles.profilePic} source={{ uri: currentUser.imageUrl || placeholder }} />
+        {currentUser.imageUrl ? (
+          <Image style={styles.profilePic} source={{ uri: currentUser.imageUrl }} />
+        ) : (
+          <Image style={styles.profilePic} source={placeholder} />
+        )}
         <View style={styles.info}>
           <Text style={styles.name}>
             {currentUser.firstName} {currentUser.lastName}
