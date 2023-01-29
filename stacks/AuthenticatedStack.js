@@ -188,7 +188,6 @@ const ProfileStack = () => {
 export const AuthenticatedStack = () => {
   return (
     <PlantProvider>
-      <StatusBar style='light' />
       <Tab.Navigator
         screenOptions={{
           headerStyle: {

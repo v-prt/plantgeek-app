@@ -52,7 +52,6 @@ export const UserProvider = ({ children }) => {
   }
 
   // LOGIN
-  // FIXME: error occurs when signing out then logging back in - currentUser is undefined on UserProfile
   const handleLogin = async values => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
     try {
@@ -108,6 +107,14 @@ export const UserProvider = ({ children }) => {
     setCurrentUserId(undefined)
   }
 
+  const handleDeleteAccount = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    deleteToken('plantgeekToken')
+    setCurrentUserId(undefined)
+    axios.delete(`${API_URL}/users/${currentUser._id}`).catch(err => console.log(err))
+    // TODO: show loading/success screen ("Your account has been deleted and you've signed out." - press ok to go back to login screen)
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -119,6 +126,7 @@ export const UserProvider = ({ children }) => {
         handleLogin,
         updateCurrentUser,
         handleLogout,
+        handleDeleteAccount,
         authenticated: !!currentUserId,
       }}>
       {children}

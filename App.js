@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from 'react'
+import { StyleSheet, View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { setCustomText } from 'react-native-global-props'
 import { QueryClient, QueryClientProvider } from 'react-query'
@@ -15,7 +16,19 @@ SplashScreen.preventAutoHideAsync()
 
 const Root = () => {
   const { authenticated } = useContext(UserContext)
-  return authenticated ? <AuthenticatedStack /> : <UnauthenticatedStack />
+
+  return (
+    <View style={styles.app}>
+      <NavigationContainer
+        theme={{
+          colors: {
+            background: COLORS.primary800,
+          },
+        }}>
+        {authenticated ? <AuthenticatedStack /> : <UnauthenticatedStack />}
+      </NavigationContainer>
+    </View>
+  )
 }
 
 export default function App() {
@@ -47,17 +60,17 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer
-      theme={{
-        colors: {
-          background: COLORS.primary800,
-        },
-      }}>
-      <QueryClientProvider client={queryClient}>
-        <UserProvider>
-          <Root />
-        </UserProvider>
-      </QueryClientProvider>
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <UserProvider>
+        <Root />
+      </UserProvider>
+    </QueryClientProvider>
   )
 }
+
+const styles = StyleSheet.create({
+  app: {
+    flex: 1,
+    backgroundColor: COLORS.primary800,
+  },
+})

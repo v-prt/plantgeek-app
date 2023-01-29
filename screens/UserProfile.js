@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { StyleSheet, Text, View, Pressable, Image } from 'react-native'
+import { StyleSheet, Text, View, Pressable, Image, ActivityIndicator } from 'react-native'
 import { COLORS } from '../GlobalStyles'
 import { UserContext } from '../contexts/UserContext'
 import moment from 'moment'
@@ -10,38 +10,46 @@ export const UserProfile = ({ navigation }) => {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.header}>
-        {currentUser.imageUrl ? (
-          <Image style={styles.profilePic} source={{ uri: currentUser.imageUrl }} />
-        ) : (
-          <Image style={styles.profilePic} source={placeholder} />
-        )}
-        <View style={styles.info}>
-          <Text style={styles.name}>
-            {currentUser.firstName} {currentUser.lastName}
-          </Text>
-          <Text style={styles.username}>@{currentUser.username}</Text>
-          <Text style={styles.dateJoined}>Joined {moment(currentUser.joined).format('ll')}</Text>
-        </View>
-      </View>
-      <Pressable
-        style={({ pressed }) => [styles.stat, pressed && styles.pressed]}
-        onPress={() => navigation.navigate('CollectionStack', { screen: 'Collection' })}>
-        <Text style={styles.label}>Collection</Text>
-        <Text style={styles.num}>{currentUser.plantCollection?.length}</Text>
-      </Pressable>
-      <Pressable
-        style={({ pressed }) => [styles.stat, pressed && styles.pressed]}
-        onPress={() => navigation.navigate('WishlistStack', { screen: 'Wishlist' })}>
-        <Text style={styles.label}>Wishlist</Text>
-        <Text style={styles.num}>{currentUser.plantWishlist?.length}</Text>
-      </Pressable>
-      <Pressable
-        style={({ pressed }) => [styles.stat, pressed && styles.pressed]}
-        onPress={() => navigation.navigate('ContributionsStack', { screen: 'Contributions' })}>
-        <Text style={styles.label}>Contributions</Text>
-        <Text style={styles.num}>{currentUser.contributions}</Text>
-      </Pressable>
+      {currentUser ? (
+        <>
+          <View style={styles.header}>
+            <View style={styles.info}>
+              <Text style={styles.name}>
+                {currentUser.firstName} {currentUser.lastName}
+              </Text>
+              <Text style={styles.username}>@{currentUser.username}</Text>
+              <Text style={styles.dateJoined}>
+                Joined {moment(currentUser.joined).format('ll')}
+              </Text>
+            </View>
+            {currentUser.imageUrl ? (
+              <Image style={styles.profilePic} source={{ uri: currentUser.imageUrl }} />
+            ) : (
+              <Image style={styles.profilePic} source={placeholder} />
+            )}
+          </View>
+          <Pressable
+            style={({ pressed }) => [styles.stat, pressed && styles.pressed]}
+            onPress={() => navigation.navigate('CollectionStack', { screen: 'Collection' })}>
+            <Text style={styles.label}>Collection</Text>
+            <Text style={styles.num}>{currentUser.plantCollection?.length}</Text>
+          </Pressable>
+          <Pressable
+            style={({ pressed }) => [styles.stat, pressed && styles.pressed]}
+            onPress={() => navigation.navigate('WishlistStack', { screen: 'Wishlist' })}>
+            <Text style={styles.label}>Wishlist</Text>
+            <Text style={styles.num}>{currentUser.plantWishlist?.length}</Text>
+          </Pressable>
+          <Pressable
+            style={({ pressed }) => [styles.stat, pressed && styles.pressed]}
+            onPress={() => navigation.navigate('ContributionsStack', { screen: 'Contributions' })}>
+            <Text style={styles.label}>Contributions</Text>
+            <Text style={styles.num}>{currentUser.contributions}</Text>
+          </Pressable>
+        </>
+      ) : (
+        <ActivityIndicator size='large' color={COLORS.primary400} />
+      )}
     </View>
   )
 }
@@ -62,9 +70,6 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     height: 80,
     width: 80,
-  },
-  info: {
-    alignItems: 'flex-end',
   },
   name: {
     fontFamily: 'Quicksand-Bold',

@@ -10,11 +10,13 @@ import { AlertText } from '../components/ui/AlertText'
 import { TextButton } from '../components/ui/TextButton'
 import * as yup from 'yup'
 import * as Haptics from 'expo-haptics'
+import { MaterialIcons } from '@expo/vector-icons'
 
 export const Settings = ({ navigation }) => {
-  // TODO: smoothly animate moving to login / welcome screen after logout and fix white flash
-  const { currentUser, updateCurrentUser, handleLogout } = useContext(UserContext)
+  const { currentUser, updateCurrentUser, handleLogout, handleDeleteAccount } =
+    useContext(UserContext)
   const [passwordModalVisible, setPasswordModalVisible] = useState(false)
+  const [deleteAccountModalVisible, setDeleteAccountModalVisible] = useState(false)
   const [currentPasswordVisible, setCurrentPasswordVisible] = useState(false)
   const [newPasswordVisible, setNewPasswordVisible] = useState(false)
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false)
@@ -23,7 +25,7 @@ export const Settings = ({ navigation }) => {
     navigation.setOptions({
       headerLeft: () => (
         <Pressable onPress={() => navigation.goBack()}>
-          <Text style={styles.cancelButtonText}>Cancel</Text>
+          <Text style={styles.buttonText}>Cancel</Text>
         </Pressable>
       ),
     })
@@ -102,7 +104,7 @@ export const Settings = ({ navigation }) => {
         validationSchema={accountSchema}
         onSubmit={handleAccountUpdate}>
         {({ handleChange, handleBlur, handleSubmit, values, isSubmitting, status }) => (
-          <>
+          <View style={styles.formWrapper}>
             {status && (
               <AlertText
                 type='error'
@@ -158,35 +160,40 @@ export const Settings = ({ navigation }) => {
               loading={isSubmitting}>
               Save
             </TextButton>
-          </>
+          </View>
         )}
       </Formik>
-      <Formik
-        initialValues={passwordInitialValues}
-        validationSchema={passwordSchema}
-        onSubmit={handlePasswordUpdate}>
-        {({ handleChange, handleBlur, handleSubmit, values, isSubmitting, status }) => (
-          <>
-            <View style={styles.passwordSection}>
-              <Text style={styles.sectionLabel}>Password</Text>
-              <Pressable
-                onPress={() => setPasswordModalVisible(true)}
-                style={styles.changePasswordBtn}>
-                <Text style={styles.buttonText}>Change</Text>
-              </Pressable>
-            </View>
-            <Modal visible={passwordModalVisible} animationType='slide'>
-              <SafeAreaView style={styles.modalWrapper}>
-                <View style={styles.modalInner}>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionLabel}>Change Password...</Text>
+        <Pressable onPress={() => setPasswordModalVisible(true)} style={styles.changePasswordBtn}>
+          <MaterialIcons name='edit' size={24} color={COLORS.primary400} />
+        </Pressable>
+      </View>
+
+      <Modal visible={passwordModalVisible} animationType='slide'>
+        <SafeAreaView style={styles.modalWrapper}>
+          <Formik
+            initialValues={passwordInitialValues}
+            validationSchema={passwordSchema}
+            onSubmit={handlePasswordUpdate}>
+            {({ handleChange, handleBlur, handleSubmit, values, isSubmitting, status }) => (
+              <View style={styles.modalInner}>
+                <View style={styles.modalHeader}>
                   <Text style={styles.modalTitle}>Change Password</Text>
-                  {status && (
-                    <AlertText
-                      type='error'
-                      icon='error'
-                      title={`Couldn't change password`}
-                      subtitle={status}
-                    />
-                  )}
+                  <Pressable onPress={() => setPasswordModalVisible(false)}>
+                    <Text style={styles.buttonText}>Cancel</Text>
+                  </Pressable>
+                </View>
+                {status && (
+                  <AlertText
+                    type='error'
+                    icon='error'
+                    title={`Couldn't change password`}
+                    subtitle={status}
+                  />
+                )}
+                <View style={styles.formWrapper}>
                   <FormItem name='currentPassword' label='Current password'>
                     <Input
                       config={{
@@ -229,31 +236,49 @@ export const Settings = ({ navigation }) => {
                       }}
                     />
                   </FormItem>
-                  <View style={styles.buttons}>
-                    <Pressable onPress={() => setPasswordModalVisible(false)}>
-                      <Text style={styles.buttonText}>Cancel</Text>
-                    </Pressable>
-                    <TextButton
-                      onPress={handleSubmit}
-                      loading={isSubmitting}
-                      disabled={isSubmitting}>
-                      Submit
-                    </TextButton>
-                  </View>
                 </View>
-              </SafeAreaView>
-            </Modal>
-          </>
-        )}
-      </Formik>
-      {/* TODO: update sign out button styling */}
-      <TextButton
-        onPress={handleLogout}
-        buttonStyle={styles.flatButton}
-        textStyle={styles.flatButtonText}>
-        Sign Out
-      </TextButton>
-      {/* TODO: danger zone (delete account) */}
+                <TextButton onPress={handleSubmit} loading={isSubmitting} disabled={isSubmitting}>
+                  Submit
+                </TextButton>
+              </View>
+            )}
+          </Formik>
+        </SafeAreaView>
+      </Modal>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionLabel}>Sign Out</Text>
+        <Pressable onPress={handleLogout}>
+          <MaterialIcons name='logout' size={24} color={COLORS.warning} />
+        </Pressable>
+      </View>
+
+      <View style={[styles.section, styles.dangerSection]}>
+        <Text style={styles.sectionLabel}>Delete Account...</Text>
+        <Pressable onPress={() => setDeleteAccountModalVisible(true)}>
+          <MaterialIcons name='delete' size={24} color={COLORS.error} />
+        </Pressable>
+      </View>
+
+      <Modal visible={deleteAccountModalVisible} animationType='slide'>
+        <SafeAreaView style={styles.modalWrapper}>
+          <View style={styles.modalInner}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Delete Account</Text>
+              <Pressable onPress={() => setDeleteAccountModalVisible(false)}>
+                <Text style={styles.buttonText}>Cancel</Text>
+              </Pressable>
+            </View>
+            <Text style={styles.confirmationText}>
+              Are you sure you want to delete your account on plantgeek? This action cannot be
+              undone.
+            </Text>
+            <TextButton onPress={handleDeleteAccount} danger>
+              Delete
+            </TextButton>
+          </View>
+        </SafeAreaView>
+      </Modal>
     </KeyboardAwareScrollView>
   )
 }
@@ -261,11 +286,16 @@ export const Settings = ({ navigation }) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
   },
-  cancelButtonText: {
+  buttonText: {
     fontFamily: 'Quicksand-Bold',
     color: COLORS.primary400,
+    fontSize: 16,
+  },
+  dangerButtonText: {
+    fontFamily: 'Quicksand-Bold',
+    color: COLORS.error,
     fontSize: 16,
   },
   formRow: {
@@ -283,23 +313,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.primary300,
   },
-  passwordSection: {
+  section: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 20,
+    marginVertical: 15,
     padding: 10,
     borderRadius: 10,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     borderWidth: 1,
   },
+  dangerSection: {
+    borderColor: COLORS.error,
+  },
   sectionLabel: {
     fontFamily: 'Quicksand-Bold',
-    fontSize: 16,
-  },
-  buttonText: {
-    fontFamily: 'Quicksand-Bold',
-    color: COLORS.primary400,
     fontSize: 16,
   },
   modalWrapper: {
@@ -310,15 +338,20 @@ const styles = StyleSheet.create({
   modalInner: {
     padding: 20,
   },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   modalTitle: {
     fontFamily: 'Quicksand-Bold',
     fontSize: 20,
-    marginBottom: 20,
   },
-  buttons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 20,
+  formWrapper: {
+    marginVertical: 30,
+  },
+  confirmationText: {
+    marginVertical: 30,
+    fontSize: 18,
   },
 })

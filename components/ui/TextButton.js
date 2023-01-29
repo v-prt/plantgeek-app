@@ -1,14 +1,22 @@
 import { Pressable, StyleSheet, ActivityIndicator, Text, View } from 'react-native'
 import { COLORS } from '../../GlobalStyles'
 
-export const TextButton = ({ children, onPress, buttonStyle, loading, textStyle, disabled }) => {
+export const TextButton = ({
+  children,
+  onPress,
+  buttonStyle,
+  loading,
+  textStyle,
+  disabled,
+  danger,
+}) => {
   return (
     <Pressable
       onPress={() => {
         if (!disabled) onPress()
       }}
       style={({ pressed }) => [pressed && styles.pressed, disabled && styles.disabled]}>
-      <View style={[styles.button, buttonStyle]}>
+      <View style={[styles.button, buttonStyle, danger && styles.danger]}>
         {loading ? (
           <ActivityIndicator size='small' color={COLORS.primary100} />
         ) : (
@@ -31,6 +39,9 @@ const styles = StyleSheet.create({
   },
   disabled: {
     opacity: 0.5,
+  },
+  danger: {
+    backgroundColor: COLORS.error,
   },
   buttonText: {
     color: COLORS.primary800,
