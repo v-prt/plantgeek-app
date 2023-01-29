@@ -11,12 +11,15 @@ import { TextButton } from '../components/ui/TextButton'
 import * as yup from 'yup'
 import * as Haptics from 'expo-haptics'
 import { MaterialIcons } from '@expo/vector-icons'
+import { ImagePicker } from '../components/ImagePicker'
 
 export const Settings = ({ navigation }) => {
-  const { currentUser, updateCurrentUser, handleLogout, handleDeleteAccount } =
+  const { currentUser, uploadProfileImage, updateCurrentUser, handleLogout, handleDeleteAccount } =
     useContext(UserContext)
+
   const [passwordModalVisible, setPasswordModalVisible] = useState(false)
   const [deleteAccountModalVisible, setDeleteAccountModalVisible] = useState(false)
+
   const [currentPasswordVisible, setCurrentPasswordVisible] = useState(false)
   const [newPasswordVisible, setNewPasswordVisible] = useState(false)
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false)
@@ -69,6 +72,11 @@ export const Settings = ({ navigation }) => {
   })
   // #endregion Schemas
 
+  // #region Functions
+  const onSelectImage = async file => {
+    await uploadProfileImage(file)
+  }
+
   const handleAccountUpdate = async (values, { setStatus }) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
     setStatus('')
@@ -93,12 +101,16 @@ export const Settings = ({ navigation }) => {
       setPasswordModalVisible(false)
     }
   }
+  // #endregion Functions
 
   return (
     <KeyboardAwareScrollView
       style={styles.screen}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      {/* TODO: profile image upload */}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 60 }}>
+      <ImagePicker onSelectImage={onSelectImage} />
+
       <Formik
         initialValues={accountInitialValues}
         validationSchema={accountSchema}

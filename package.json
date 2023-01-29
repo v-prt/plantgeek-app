@@ -29,7 +29,8 @@
     "react-native-global-props": "^1.1.5",
     "react-native-keyboard-aware-scrollview": "^2.1.0",
     "react-query": "^3.39.2",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "expo-image-picker": "~14.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

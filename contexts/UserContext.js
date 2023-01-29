@@ -1,7 +1,9 @@
 import { createContext, useEffect, useState } from 'react'
+import { Alert } from 'react-native'
 import { useQuery, useQueryClient } from 'react-query'
 import axios from 'axios'
-import { API_URL } from '../constants'
+import { API_URL, CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET_USERS } from '../constants'
+
 import * as SecureStore from 'expo-secure-store'
 import * as Haptics from 'expo-haptics'
 
@@ -88,6 +90,35 @@ export const UserProvider = ({ children }) => {
     }
   }, [token])
 
+  // UPLOAD PROFILE IMAGE
+  const uploadProfileImage = async file => {
+    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`
+
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET_USERS)
+
+    await axios
+      .post(cloudinaryUrl, formData)
+      .then(res => {
+        const imageUrl = res.data.secure_url
+
+        axios
+          .put(`${API_URL}/users/${currentUserId}`, { imageUrl })
+          .then(() => {
+            queryClient.invalidateQueries('current-user')
+          })
+          .catch(err => {
+            console.log(err)
+            Alert.alert('Internal Server Error', 'Something went wrong. Please try again later.')
+          })
+      })
+      .catch(err => {
+        console.log(err)
+        Alert.alert('Image Upload Error', 'Something went wrong. Please try again later.')
+      })
+  }
+
   // UPDATE CURRENT USER DATA
   const updateCurrentUser = async data => {
     try {
@@ -124,6 +155,7 @@ export const UserProvider = ({ children }) => {
         userStatus,
         handleSignup,
         handleLogin,
+        uploadProfileImage,
         updateCurrentUser,
         handleLogout,
         handleDeleteAccount,
