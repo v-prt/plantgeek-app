@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 16,
     fontFamily: 'Quicksand-Bold',
-    opacity: 0.6,
+    opacity: 0.7,
   },
   sublabel: {
     opacity: 0.5,

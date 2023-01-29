@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { StyleSheet, Text, View, Pressable, Image, ActivityIndicator } from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
 import { COLORS } from '../GlobalStyles'
 import { UserContext } from '../contexts/UserContext'
 import moment from 'moment'
@@ -12,7 +13,11 @@ export const UserProfile = ({ navigation }) => {
     <View style={styles.screen}>
       {currentUser ? (
         <>
-          <View style={styles.header}>
+          <LinearGradient
+            style={styles.header}
+            colors={['#a4e17d', '#95d190']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}>
             <View style={styles.info}>
               <Text style={styles.name}>
                 {currentUser.firstName} {currentUser.lastName}
@@ -27,7 +32,7 @@ export const UserProfile = ({ navigation }) => {
             ) : (
               <Image style={styles.profilePic} source={placeholder} />
             )}
-          </View>
+          </LinearGradient>
           <Pressable
             style={({ pressed }) => [styles.stat, pressed && styles.pressed]}
             onPress={() => navigation.navigate('CollectionStack', { screen: 'Collection' })}>
@@ -58,13 +63,15 @@ const styles = StyleSheet.create({
   screen: {
     backgroundColor: COLORS.primary800,
     flex: 1,
-    padding: 20,
+    padding: 10,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    padding: 20,
+    borderRadius: 16,
+    marginBottom: 10,
   },
   profilePic: {
     borderRadius: 40,
@@ -73,16 +80,18 @@ const styles = StyleSheet.create({
   },
   name: {
     fontFamily: 'Quicksand-Bold',
+    color: COLORS.primary800,
     fontSize: 20,
   },
   username: {
-    fontFamily: 'Quicksand-Medium',
+    fontFamily: 'Quicksand-Bold',
     fontSize: 16,
-    color: COLORS.primary400,
+    color: COLORS.primary500,
   },
   dateJoined: {
+    color: COLORS.primary800,
     fontSize: 14,
-    opacity: 0.6,
+    opacity: 0.7,
     marginTop: 10,
   },
   stat: {
@@ -102,8 +111,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   label: {
-    fontFamily: 'Quicksand-Medium',
+    fontFamily: 'Quicksand-Bold',
     fontSize: 16,
     textTransform: 'uppercase',
+    opacity: 0.7,
   },
 })

@@ -121,7 +121,7 @@ export const PlantProfile = ({ route }) => {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}>
             <Text style={styles.primaryName}>{plant.primaryName}</Text>
-            <Text style={styles.secondaryName}>{plant.secondaryName}</Text>
+            {plant.secondaryName && <Text style={styles.secondaryName}>{plant.secondaryName}</Text>}
           </LinearGradient>
           <View style={styles.info}>
             <Image source={{ uri: plant.imageUrl }} style={styles.image} />
@@ -181,7 +181,6 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
-    backgroundColor: COLORS.primary400,
     padding: 20,
     borderRadius: 16,
     marginBottom: 10,
@@ -190,12 +189,12 @@ const styles = StyleSheet.create({
     color: COLORS.primary800,
     fontSize: 22,
     fontFamily: 'Quicksand-Bold',
-    marginBottom: 6,
   },
   secondaryName: {
     color: COLORS.primary800,
     fontSize: 18,
-    fontStyle: 'italic',
+    opacity: 0.7,
+    marginTop: 8,
   },
   info: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',

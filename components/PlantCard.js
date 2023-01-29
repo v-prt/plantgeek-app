@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
   },
   pressed: {
-    opacity: 0.8,
+    opacity: 0.7,
   },
   image: {
     height: 100,

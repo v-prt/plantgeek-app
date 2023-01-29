@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 10,
     margin: 5,
-    opacity: 0.6,
+    opacity: 0.7,
   },
   firstChild: {
     marginLeft: 20,

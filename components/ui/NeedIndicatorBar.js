@@ -37,11 +37,11 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    opacity: 0.6,
+    opacity: 0.7,
     textTransform: 'uppercase',
   },
   need: {
-    fontFamily: 'Quicksand-Medium',
+    fontFamily: 'Quicksand-Bold',
     textTransform: 'capitalize',
     fontSize: 16,
   },

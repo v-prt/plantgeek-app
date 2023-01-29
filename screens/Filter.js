@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   label: {
+    fontFamily: 'Quicksand-Bold',
     fontSize: 16,
     textTransform: 'uppercase',
     marginVertical: 5,

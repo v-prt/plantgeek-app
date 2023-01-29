@@ -69,7 +69,7 @@ export const SearchList = ({ searchVal, setSearchVal, formData, setFormData }) =
 
   const SuggestionText = ({ text }) => {
     return (
-      <Text style={styles.text}>
+      <Text style={styles.textWrapper}>
         {text
           .toLowerCase()
           .split(searchVal.toLowerCase())
@@ -77,7 +77,7 @@ export const SearchList = ({ searchVal, setSearchVal, formData, setFormData }) =
           .split('**')
           .map((item, index) => {
             return (
-              <Text key={index} style={index % 2 === 1 && styles.boldText}>
+              <Text key={index} style={[styles.text, index % 2 === 1 && styles.boldText]}>
                 {item}
               </Text>
             )
@@ -165,10 +165,12 @@ const styles = StyleSheet.create({
   pressed: {
     opacity: 0.7,
   },
+  textWrapper: {
+    marginLeft: 8,
+  },
   text: {
     fontSize: 16,
-    marginLeft: 8,
-    opacity: 0.8,
+    opacity: 0.7,
   },
   boldText: {
     fontFamily: 'Quicksand-Bold',
