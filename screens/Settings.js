@@ -1,5 +1,5 @@
-import { useContext, useEffect } from 'react'
-import { StyleSheet, Pressable, Text, View, Alert } from 'react-native'
+import { useState, useContext, useEffect } from 'react'
+import { StyleSheet, Pressable, Text, View, Modal, Alert, SafeAreaView } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import { UserContext } from '../contexts/UserContext'
 import { COLORS } from '../GlobalStyles'
@@ -8,12 +8,16 @@ import { FormItem } from '../components/ui/FormItem'
 import { Input } from '../components/ui/Input'
 import { AlertText } from '../components/ui/AlertText'
 import { TextButton } from '../components/ui/TextButton'
-import * as Yup from 'yup'
+import * as yup from 'yup'
 import * as Haptics from 'expo-haptics'
 
 export const Settings = ({ navigation }) => {
   // TODO: smoothly animate moving to login / welcome screen after logout and fix white flash
   const { currentUser, updateCurrentUser, handleLogout } = useContext(UserContext)
+  const [passwordModalVisible, setPasswordModalVisible] = useState(false)
+  const [currentPasswordVisible, setCurrentPasswordVisible] = useState(false)
+  const [newPasswordVisible, setNewPasswordVisible] = useState(false)
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false)
 
   useEffect(() => {
     navigation.setOptions({
@@ -41,23 +45,25 @@ export const Settings = ({ navigation }) => {
   // #endregion Initial Values
 
   // #region Schemas
-  const accountSchema = Yup.object().shape({
-    firstName: Yup.string().min(2, `That's too short`).required('Required'),
-    lastName: Yup.string().min(2, `That's too short`).required('Required'),
-    email: Yup.string().email('Invalid email').required('Required'),
-    username: Yup.string()
+  const accountSchema = yup.object().shape({
+    firstName: yup.string().min(2, `That's too short`).required('Required'),
+    lastName: yup.string().min(2, `That's too short`).required('Required'),
+    email: yup.string().email('Invalid email').required('Required'),
+    username: yup
+      .string()
       .min(4, `That's too short`)
       .max(20, `That's too long`)
       .required('Required')
       .matches(/^[a-zA-Z0-9]+$/, 'No special characters or spaces allowed'),
   })
 
-  const passwordSchema = Yup.object().shape({
-    currentPassword: Yup.string().required('Required'),
-    newPassword: Yup.string().min(6, `That's too short`).required('Required'),
-    confirmPassword: Yup.string()
+  const passwordSchema = yup.object().shape({
+    currentPassword: yup.string().required('Required'),
+    newPassword: yup.string().min(6, `That's too short`).required('Required'),
+    confirmPassword: yup
+      .string()
       .required('You must confirm your new password')
-      .oneOf([Yup.ref('newPassword'), null], 'Passwords must match'),
+      .oneOf([yup.ref('newPassword'), null], 'Passwords must match'),
   })
   // #endregion Schemas
 
@@ -73,7 +79,18 @@ export const Settings = ({ navigation }) => {
     }
   }
 
-  const handlePasswordUpdate = async values => {}
+  const handlePasswordUpdate = async (values, { setStatus }) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    setStatus('')
+    const result = await updateCurrentUser(values)
+    if (result.error) {
+      setStatus(result.error)
+    } else {
+      // TODO: improve success feedback (display in UI)
+      Alert.alert('Success', 'Your password has been changed')
+      setPasswordModalVisible(false)
+    }
+  }
 
   return (
     <KeyboardAwareScrollView
@@ -144,9 +161,89 @@ export const Settings = ({ navigation }) => {
           </>
         )}
       </Formik>
-      <Formik initialValues={passwordInitialValues} onSubmit={handlePasswordUpdate}>
-        {({ values, isSubmitting }) => (
-          <>{/* TODO: password form (click 'change' to open form) */}</>
+      <Formik
+        initialValues={passwordInitialValues}
+        validationSchema={passwordSchema}
+        onSubmit={handlePasswordUpdate}>
+        {({ handleChange, handleBlur, handleSubmit, values, isSubmitting, status }) => (
+          <>
+            <View style={styles.passwordSection}>
+              <Text style={styles.sectionLabel}>Password</Text>
+              <Pressable
+                onPress={() => setPasswordModalVisible(true)}
+                style={styles.changePasswordBtn}>
+                <Text style={styles.buttonText}>Change</Text>
+              </Pressable>
+            </View>
+            <Modal visible={passwordModalVisible} animationType='slide'>
+              <SafeAreaView style={styles.modalWrapper}>
+                <View style={styles.modalInner}>
+                  <Text style={styles.modalTitle}>Change Password</Text>
+                  {status && (
+                    <AlertText
+                      type='error'
+                      icon='error'
+                      title={`Couldn't change password`}
+                      subtitle={status}
+                    />
+                  )}
+                  <FormItem name='currentPassword' label='Current password'>
+                    <Input
+                      config={{
+                        onBlur: handleBlur('currentPassword'),
+                        onChangeText: handleChange('currentPassword'),
+                        value: values.currentPassword,
+                        secureTextEntry: !currentPasswordVisible,
+                      }}
+                      icon={currentPasswordVisible ? 'eye' : 'eye-off'}
+                      iconOnPress={() => {
+                        setCurrentPasswordVisible(!currentPasswordVisible)
+                      }}
+                    />
+                  </FormItem>
+                  <FormItem name='newPassword' label='New password'>
+                    <Input
+                      config={{
+                        onBlur: handleBlur('newPassword'),
+                        onChangeText: handleChange('newPassword'),
+                        value: values.newPassword,
+                        secureTextEntry: !newPasswordVisible,
+                      }}
+                      icon={newPasswordVisible ? 'eye' : 'eye-off'}
+                      iconOnPress={() => {
+                        setNewPasswordVisible(!newPasswordVisible)
+                      }}
+                    />
+                  </FormItem>
+                  <FormItem name='confirmPassword' label='Confirm password'>
+                    <Input
+                      config={{
+                        onBlur: handleBlur('confirmPassword'),
+                        onChangeText: handleChange('confirmPassword'),
+                        value: values.confirmPassword,
+                        secureTextEntry: !confirmPasswordVisible,
+                      }}
+                      icon={confirmPasswordVisible ? 'eye' : 'eye-off'}
+                      iconOnPress={() => {
+                        setConfirmPasswordVisible(!confirmPasswordVisible)
+                      }}
+                    />
+                  </FormItem>
+                  <View style={styles.buttons}>
+                    <Pressable onPress={() => setPasswordModalVisible(false)}>
+                      <Text style={styles.buttonText}>Cancel</Text>
+                    </Pressable>
+                    <TextButton
+                      onPress={handleSubmit}
+                      loading={isSubmitting}
+                      disabled={isSubmitting}>
+                      Submit
+                    </TextButton>
+                  </View>
+                </View>
+              </SafeAreaView>
+            </Modal>
+          </>
         )}
       </Formik>
       {/* TODO: update sign out button styling */}
@@ -185,5 +282,43 @@ const styles = StyleSheet.create({
     fontFamily: 'Quicksand-Regular',
     fontSize: 16,
     color: COLORS.primary300,
+  },
+  passwordSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 20,
+    padding: 10,
+    borderRadius: 10,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth: 1,
+  },
+  sectionLabel: {
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 16,
+  },
+  buttonText: {
+    fontFamily: 'Quicksand-Bold',
+    color: COLORS.primary400,
+    fontSize: 16,
+  },
+  modalWrapper: {
+    backgroundColor: COLORS.primary800,
+    padding: 20,
+    flex: 1,
+  },
+  modalInner: {
+    padding: 20,
+  },
+  modalTitle: {
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 20,
+    marginBottom: 20,
+  },
+  buttons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 20,
   },
 })

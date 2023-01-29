@@ -17,7 +17,7 @@ export const Filter = ({ navigation }) => {
     navigation.setOptions({
       headerLeft: () => (
         <Pressable onPress={clearFilters}>
-          <Text style={styles.clearButtonText}>Clear</Text>
+          <Text style={styles.buttonText}>Clear</Text>
         </Pressable>
       ),
       headerRight: () => (
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   results: {
     fontSize: 16,
   },
-  clearButtonText: {
+  buttonText: {
     fontFamily: 'Quicksand-Bold',
     color: COLORS.primary400,
     fontSize: 16,

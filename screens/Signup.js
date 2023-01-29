@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useState, useContext } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import { Formik } from 'formik'
@@ -12,6 +12,8 @@ import { AlertText } from '../components/ui/AlertText'
 
 export const Signup = ({ navigation }) => {
   const { handleSignup } = useContext(UserContext)
+  const [passwordVisible, setPasswordVisible] = useState(false)
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false)
 
   const validationSchema = yup.object().shape({
     firstName: yup
@@ -120,6 +122,11 @@ export const Signup = ({ navigation }) => {
                   onBlur: handleBlur('password'),
                   onChangeText: handleChange('password'),
                   value: values.password,
+                  secureTextEntry: !passwordVisible,
+                }}
+                icon={passwordVisible ? 'eye' : 'eye-off'}
+                iconOnPress={() => {
+                  setPasswordVisible(!passwordVisible)
                 }}
               />
             </FormItem>
@@ -129,6 +136,11 @@ export const Signup = ({ navigation }) => {
                   onBlur: handleBlur('confirmPassword'),
                   onChangeText: handleChange('confirmPassword'),
                   value: values.confirmPassword,
+                  secureTextEntry: !confirmPasswordVisible,
+                }}
+                icon={confirmPasswordVisible ? 'eye' : 'eye-off'}
+                iconOnPress={() => {
+                  setConfirmPasswordVisible(!confirmPasswordVisible)
                 }}
               />
             </FormItem>

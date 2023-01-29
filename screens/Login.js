@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useState, useContext } from 'react'
 import { StyleSheet, View, Alert, KeyboardAvoidingView, Platform } from 'react-native'
 import * as yup from 'yup'
 import { Formik } from 'formik'
@@ -10,6 +10,7 @@ import { TextButton } from '../components/ui/TextButton'
 
 export const Login = ({ navigation }) => {
   const { handleLogin } = useContext(UserContext)
+  const [passwordVisible, setPasswordVisible] = useState(false)
 
   const validationSchema = yup.object().shape({
     username: yup.string().required('Required'),
@@ -58,7 +59,11 @@ export const Login = ({ navigation }) => {
                   onBlur: handleBlur('password'),
                   onChangeText: handleChange('password'),
                   value: values.password,
-                  secureTextEntry: true,
+                  secureTextEntry: !passwordVisible,
+                }}
+                icon={passwordVisible ? 'eye' : 'eye-off'}
+                iconOnPress={() => {
+                  setPasswordVisible(!passwordVisible)
                 }}
               />
             </FormItem>
