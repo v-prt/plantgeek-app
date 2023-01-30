@@ -187,12 +187,12 @@ const styles = StyleSheet.create({
   },
   primaryName: {
     color: COLORS.primary800,
-    fontSize: 22,
+    fontSize: 20,
     fontFamily: 'Quicksand-Bold',
   },
   secondaryName: {
     color: COLORS.primary800,
-    fontSize: 18,
+    fontSize: 16,
     opacity: 0.7,
     marginTop: 8,
   },
@@ -215,6 +215,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   region: {
-    fontSize: 16,
+    fontFamily: 'Quicksand-Bold',
+    opacity: 0.7,
   },
 })

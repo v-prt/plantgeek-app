@@ -94,10 +94,13 @@ export const SearchList = ({ searchVal, setSearchVal, formData, setFormData }) =
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
           // save new recent searches to local storage, limit to last 10 searches
-          // FIXME: improve this to not save duplicates
           AsyncStorage.setItem(
             'recentSearches',
-            JSON.stringify([text, ...recentSearches].slice(0, 10))
+            JSON.stringify(
+              [text, ...recentSearches]
+                .filter((item, index, self) => self.indexOf(item) === index)
+                .slice(0, 10)
+            )
           )
           // submit search and close search list
           setFormData({ ...formData, search: [text] })
