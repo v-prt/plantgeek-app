@@ -1,12 +1,12 @@
 import { StyleSheet, Pressable } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 
-export const IconButton = ({ icon, color, onPress }) => {
+export const IconButton = ({ icon, size = 24, color, onPress }) => {
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
-      <MaterialIcons name={icon} size={24} color={color} />
+      <MaterialIcons name={icon} size={size} color={color} />
     </Pressable>
   )
 }

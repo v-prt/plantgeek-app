@@ -3,14 +3,16 @@ import { Field, ErrorMessage } from 'formik'
 import { MaterialIcons } from '@expo/vector-icons'
 import { COLORS } from '../../GlobalStyles'
 
-export const FormItem = ({ name, label, sublabel, subtext, style, children }) => {
+export const FormItem = ({ name, label, sublabel, subtext, style, labelStyle, children }) => {
   return (
     <Field>
       {({ form }) => {
         const error = form.errors[name] && form.touched[name]
         return (
           <View style={[styles.wrapper, style]}>
-            {label && <Text style={[styles.label, error && styles.error]}>{label}</Text>}
+            {label && (
+              <Text style={[styles.label, labelStyle, error && styles.error]}>{label}</Text>
+            )}
             {sublabel && <Text style={styles.sublabel}>{subtext}</Text>}
             {children}
             <ErrorMessage

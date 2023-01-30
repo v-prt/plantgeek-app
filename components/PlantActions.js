@@ -7,6 +7,7 @@ import { StyleSheet, View, Text, Pressable, Alert } from 'react-native'
 import { Formik } from 'formik'
 import { COLORS } from '../GlobalStyles'
 import { MaterialIcons } from '@expo/vector-icons'
+import * as Haptics from 'expo-haptics'
 
 export const PlantActions = ({ plant }) => {
   const plantId = plant._id
@@ -18,6 +19,7 @@ export const PlantActions = ({ plant }) => {
   const [liked, setLiked] = useState(plant.hearts?.includes(currentUser._id))
 
   const actionHandler = async values => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     try {
       await axios.post(`${API_URL}/lists/${currentUser._id}`, values)
       queryClient.invalidateQueries('plant')

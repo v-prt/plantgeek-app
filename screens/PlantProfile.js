@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { useQuery } from 'react-query'
 import { StyleSheet, ScrollView, View, Text, Image, ActivityIndicator } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -8,13 +8,45 @@ import axios from 'axios'
 import { NeedIndicatorBar } from '../components/ui/NeedIndicatorBar'
 import { PlantInfoTag } from '../components/ui/PlantInfoTag'
 import { PlantActions } from '../components/PlantActions'
+import { IconButton } from '../components/ui/IconButton'
+import { UserContext } from '../contexts/UserContext'
 
-export const PlantProfile = ({ route }) => {
+export const PlantProfile = ({ route, navigation }) => {
   const { slug } = route.params
+  const { currentUser } = useContext(UserContext)
   const [difficulty, setDifficulty] = useState()
   const [toxicity, setToxicity] = useState()
   const [climate, setClimate] = useState()
   const [rarity, setRarity] = useState()
+  // TODO: add delete plant confirmation modal
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+
+  useEffect(() => {
+    if (currentUser.role === 'admin') {
+      navigation.setOptions({
+        headerRight: () => (
+          <View style={{ flexDirection: 'row' }}>
+            <IconButton
+              icon='edit'
+              size={20}
+              color={COLORS.primary100}
+              onPress={() => {
+                navigation.navigate('ManagePlant', { plant })
+              }}
+            />
+            <IconButton
+              icon='delete'
+              size={20}
+              color={COLORS.error}
+              onPress={() => {
+                setDeleteModalVisible(true)
+              }}
+            />
+          </View>
+        ),
+      })
+    }
+  })
 
   const { data: plant, status } = useQuery(['plant', slug], async () => {
     try {

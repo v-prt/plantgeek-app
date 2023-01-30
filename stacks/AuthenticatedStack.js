@@ -10,6 +10,7 @@ import { COLORS } from '../GlobalStyles'
 import { Browse } from '../screens/Browse'
 import { Filter } from '../screens/Filter'
 import { PlantProfile } from '../screens/PlantProfile'
+import { ManagePlant } from '../screens/ManagePlant'
 import { Collection } from '../screens/Collection'
 import { Wishlist } from '../screens/Wishlist'
 import { Contributions } from '../screens/Contributions'
@@ -69,6 +70,14 @@ const BrowseStack = () => {
           title: '',
         }}
       />
+      <Stack.Screen
+        name='ManagePlant'
+        component={ManagePlant}
+        options={{
+          title: 'Edit Plant',
+          presentation: 'modal',
+        }}
+      />
     </Stack.Navigator>
   )
 }
@@ -91,6 +100,14 @@ const CollectionStack = () => {
         component={PlantProfile}
         options={{
           title: '',
+        }}
+      />
+      <Stack.Screen
+        name='ManagePlant'
+        component={ManagePlant}
+        options={{
+          title: 'Edit Plant',
+          presentation: 'modal',
         }}
       />
     </Stack.Navigator>
@@ -117,6 +134,14 @@ const WishlistStack = () => {
           title: '',
         }}
       />
+      <Stack.Screen
+        name='ManagePlant'
+        component={ManagePlant}
+        options={{
+          title: 'Edit Plant',
+          presentation: 'modal',
+        }}
+      />
     </Stack.Navigator>
   )
 }
@@ -139,6 +164,14 @@ const ContributionsStack = () => {
         component={PlantProfile}
         options={{
           title: '',
+        }}
+      />
+      <Stack.Screen
+        name='ManagePlant'
+        component={ManagePlant}
+        options={{
+          title: 'Edit Plant',
+          presentation: 'modal',
         }}
       />
     </Stack.Navigator>
