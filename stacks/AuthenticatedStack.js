@@ -1,11 +1,8 @@
 import { StyleSheet, Image, Text } from 'react-native'
-import { StatusBar } from 'expo-status-bar'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { MaterialIcons } from '@expo/vector-icons'
-
 import { PlantProvider } from '../contexts/PlantContext'
-
 import { COLORS } from '../GlobalStyles'
 import { Browse } from '../screens/Browse'
 import { Filter } from '../screens/Filter'

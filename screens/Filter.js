@@ -4,8 +4,10 @@ import { COLORS } from '../GlobalStyles'
 import { FilterOption } from '../components/ui/FilterOption'
 import { PlantContext } from '../contexts/PlantContext'
 import * as Haptics from 'expo-haptics'
+import { UserContext } from '../contexts/UserContext'
 
 export const Filter = ({ navigation }) => {
+  const { currentUser } = useContext(UserContext)
   const { fetching, totalResults, setFormData } = useContext(PlantContext)
 
   const clearFilters = () => {
@@ -101,6 +103,20 @@ export const Filter = ({ navigation }) => {
           <FilterOption filter='rarity' label='Unicorn' value='unicorn' lastChild />
         </ScrollView>
       </View>
+
+      {currentUser.role === 'admin' && (
+        <View style={styles.filter}>
+          <Text style={styles.label}>Review status</Text>
+          <ScrollView
+            style={styles.options}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}>
+            <FilterOption filter='review' label='Approved' value='approved' firstChild />
+            <FilterOption filter='review' label='Pending' value='pending' />
+            <FilterOption filter='review' label='Rejected' value='rejected' lastChild />
+          </ScrollView>
+        </View>
+      )}
     </ScrollView>
   )
 }

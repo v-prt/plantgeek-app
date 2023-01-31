@@ -1,5 +1,11 @@
-import { useEffect } from 'react'
-import { StyleSheet, Pressable, Text, View } from 'react-native'
+import { useState, useEffect, useContext } from 'react'
+import { useQueryClient } from 'react-query'
+import { UserContext } from '../contexts/UserContext'
+import { API_URL, CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } from '../constants'
+import axios from 'axios'
+import * as yup from 'yup'
+import * as Haptics from 'expo-haptics'
+import { StyleSheet, Pressable, Text, View, Alert } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import { COLORS } from '../GlobalStyles'
 import { Formik } from 'formik'
@@ -8,15 +14,18 @@ import { Input } from '../components/ui/Input'
 import { AlertText } from '../components/ui/AlertText'
 import { TextButton } from '../components/ui/TextButton'
 import { SelectOptions } from '../components/ui/SelectOptions'
-import * as yup from 'yup'
-import * as Haptics from 'expo-haptics'
+import { ImagePicker } from '../components/ImagePicker'
 
 export const ManagePlant = ({ route, navigation }) => {
-  // TODO: check if editing existing plant or adding new plant
-  const plant = route.params.plant
+  const queryClient = useQueryClient()
+  const { currentUser } = useContext(UserContext)
+  const existingPlant = route?.params?.existingPlant
+  const duplicatePlant = route?.params?.duplicatePlant
+  const [newImage, setNewImage] = useState(null)
 
   useEffect(() => {
     navigation.setOptions({
+      headerTitle: existingPlant ? 'Edit plant' : duplicatePlant ? 'Duplicate plant' : 'New plant',
       headerLeft: () => (
         <Pressable onPress={() => navigation.goBack()}>
           <Text style={styles.buttonText}>Cancel</Text>
@@ -25,24 +34,40 @@ export const ManagePlant = ({ route, navigation }) => {
     })
   })
 
-  const initialValues = {
-    imageUrl: plant.imageUrl,
-    primaryName: plant.primaryName,
-    secondaryName: plant.secondaryName,
-    light: plant.light,
-    water: plant.water,
-    temperature: plant.temperature,
-    humidity: plant.humidity,
-    toxic: plant.toxic,
-    origin: plant.origin,
-    climate: plant.climate,
-    rarity: plant.rarity,
-    review: plant.review,
-    sourceUrl: plant.sourceUrl,
-  }
+  const initialValues = existingPlant
+    ? { ...existingPlant }
+    : duplicatePlant
+    ? {
+        primaryName: `${duplicatePlant.primaryName} (Copy)`,
+        secondaryName: duplicatePlant.secondaryName || '',
+        light: duplicatePlant.light || '',
+        water: duplicatePlant.water || '',
+        temperature: duplicatePlant.temperature || '',
+        humidity: duplicatePlant.humidity || '',
+        toxic: duplicatePlant.toxic,
+        origin: duplicatePlant.origin || '',
+        climate: duplicatePlant.climate || '',
+        rarity: duplicatePlant.rarity || '',
+        sourceUrl: duplicatePlant.sourceUrl || '',
+        review: 'pending',
+      }
+    : {
+        primaryName: '',
+        secondaryName: '',
+        light: '',
+        water: '',
+        temperature: '',
+        humidity: '',
+        toxic: '',
+        origin: '',
+        climate: '',
+        rarity: '',
+        sourceUrl: '',
+        // review: currentUser.role === 'admin' ? 'approved' : 'pending',
+        review: 'pending',
+      }
 
   const schema = yup.object().shape({
-    imageUrl: yup.string().required('Required'),
     primaryName: yup
       .string()
       .min(2, 'Too short')
@@ -61,18 +86,88 @@ export const ManagePlant = ({ route, navigation }) => {
     origin: yup.string(),
     climate: yup.string(),
     rarity: yup.string(),
+    review: yup.string(),
     sourceUrl: yup.string().url('Invalid URL').required('Required'),
   })
 
-  const handlePlantUpdate = async (values, { setStatus }) => {
+  const onSelectImage = file => {
+    setNewImage(file)
+  }
+
+  const submitHandler = async (values, { setStatus, setSubmitting }) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-    setStatus('')
-    console.log(values)
-    // TODO: submit updates and handle errors - test each setting
+    setStatus(undefined)
+
+    if (!currentUser.emailVerified) {
+      // TODO: make plant private instead of preventing submission when email not verified?
+      return
+    }
+
+    if (!newImage && !existingPlant?.imageUrl) {
+      setStatus('You must upload an image.')
+      setSubmitting(false)
+      return
+    }
+
+    try {
+      if (newImage) {
+        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`
+
+        const formData = new FormData()
+        formData.append('file', newImage)
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+
+        // upload new image to cloudinary
+        const cloudinaryRes = await axios.post(cloudinaryUrl, formData)
+        values.imageUrl = cloudinaryRes.data.secure_url
+      }
+
+      const data = {
+        ...values,
+        slug: values.primaryName.replace(/\s+/g, '-').toLowerCase(),
+        contributorId: currentUser._id,
+      }
+
+      if (existingPlant) {
+        // update existing plant
+        axios
+          .put(`${API_URL}/plants/${existingPlant._id}`, data)
+          .then(() => {
+            Alert.alert('Success', 'Plant updated')
+            navigation.navigate('PlantProfile', { slug: data.slug })
+            queryClient.invalidateQueries('plants')
+            queryClient.invalidateQueries('plant')
+          })
+          .catch(err => {
+            console.log(err)
+            setStatus(err.response.data.message)
+            setSubmitting(false)
+          })
+      } else {
+        // add new plant
+        axios
+          .post(`${API_URL}/plants`, data)
+          .then(() => {
+            Alert.alert('Success', 'Plant submitted')
+            navigation.navigate('PlantProfile', { slug: data.slug })
+            queryClient.invalidateQueries('plants')
+            queryClient.invalidateQueries('plant')
+          })
+          .catch(err => {
+            console.log(err)
+            setStatus(err.response.data.message)
+            setSubmitting(false)
+          })
+      }
+    } catch (err) {
+      console.log(err)
+      setStatus('Sorry, something went wrong. Please try again later.')
+      setSubmitting(false)
+    }
   }
 
   return (
-    <Formik initialValues={initialValues} validationSchema={schema} onSubmit={handlePlantUpdate}>
+    <Formik initialValues={initialValues} validationSchema={schema} onSubmit={submitHandler}>
       {({
         handleChange,
         handleBlur,
@@ -87,22 +182,15 @@ export const ManagePlant = ({ route, navigation }) => {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 60 }}>
+          <ImagePicker currentImage={initialValues.imageUrl} onSelectImage={onSelectImage} />
           <View style={styles.formSectionWrapper}>
-            {status && (
-              <AlertText
-                type='error'
-                icon='error'
-                title={`Couldn't update plant`}
-                subtitle={status}
-              />
-            )}
-            {/* TODO: image upload */}
-            <FormItem name='primaryName' label='Botanical name'>
+            <FormItem name='primaryName' label='Botanical name' required>
               <Input
                 config={{
                   onBlur: handleBlur('primaryName'),
                   onChangeText: handleChange('primaryName'),
                   value: values.primaryName,
+                  placeholder: 'e.g. Monstera deliciosa',
                 }}
               />
             </FormItem>
@@ -112,12 +200,13 @@ export const ManagePlant = ({ route, navigation }) => {
                   onBlur: handleBlur('secondaryName'),
                   onChangeText: handleChange('secondaryName'),
                   value: values.secondaryName,
+                  placeholder: 'e.g. Swiss cheese plant',
                 }}
               />
             </FormItem>
           </View>
 
-          <FormItem name='light' label='Light' labelStyle={styles.labelStyle}>
+          <FormItem name='light' label='Light' labelStyle={styles.labelStyle} required>
             <SelectOptions
               name='light'
               options={[
@@ -129,7 +218,7 @@ export const ManagePlant = ({ route, navigation }) => {
               setFieldValue={setFieldValue}
             />
           </FormItem>
-          <FormItem name='water' label='Water' labelStyle={styles.labelStyle}>
+          <FormItem name='water' label='Water' labelStyle={styles.labelStyle} required>
             <SelectOptions
               name='water'
               options={[
@@ -143,7 +232,7 @@ export const ManagePlant = ({ route, navigation }) => {
               setFieldValue={setFieldValue}
             />
           </FormItem>
-          <FormItem name='temperature' label='Temperature' labelStyle={styles.labelStyle}>
+          <FormItem name='temperature' label='Temperature' labelStyle={styles.labelStyle} required>
             <SelectOptions
               name='temperature'
               options={[
@@ -154,7 +243,7 @@ export const ManagePlant = ({ route, navigation }) => {
               setFieldValue={setFieldValue}
             />
           </FormItem>
-          <FormItem name='humidity' label='Humidity' labelStyle={styles.labelStyle}>
+          <FormItem name='humidity' label='Humidity' labelStyle={styles.labelStyle} required>
             <SelectOptions
               name='humidity'
               options={[
@@ -166,7 +255,7 @@ export const ManagePlant = ({ route, navigation }) => {
               setFieldValue={setFieldValue}
             />
           </FormItem>
-          <FormItem name='toxic' label='Toxicity' labelStyle={styles.labelStyle}>
+          <FormItem name='toxic' label='Toxicity' labelStyle={styles.labelStyle} required>
             <SelectOptions
               name='toxic'
               options={[
@@ -212,40 +301,52 @@ export const ManagePlant = ({ route, navigation }) => {
                   onBlur: handleBlur('origin'),
                   onChangeText: handleChange('origin'),
                   value: values.origin,
+                  placeholder: 'e.g. Central America',
                 }}
               />
             </FormItem>
-            <FormItem name='sourceUrl' label='Source URL'>
+            <FormItem name='sourceUrl' label='Source URL' required>
               <Input
                 config={{
                   onBlur: handleBlur('sourceUrl'),
                   onChangeText: handleChange('sourceUrl'),
                   value: values.sourceUrl,
+                  placeholder: 'e.g. https://plantpedia.com/monstera-deliciosa',
                 }}
               />
             </FormItem>
           </View>
 
-          <FormItem name='review' label='Review status' labelStyle={styles.labelStyle}>
-            <SelectOptions
-              name='review'
-              options={[
-                { value: 'pending', label: 'Pending' },
-                { value: 'approved', label: 'Approved' },
-                { value: 'rejected', label: 'Rejected' },
-              ]}
-              value={values.review}
-              setFieldValue={setFieldValue}
-            />
-          </FormItem>
+          {currentUser.role === 'admin' && existingPlant && (
+            <FormItem name='review' label='Review status' labelStyle={styles.labelStyle}>
+              <SelectOptions
+                name='review'
+                options={[
+                  { value: 'pending', label: 'Pending' },
+                  { value: 'approved', label: 'Approved' },
+                  { value: 'rejected', label: 'Rejected' },
+                ]}
+                value={values.review}
+                setFieldValue={setFieldValue}
+              />
+            </FormItem>
+          )}
 
           <View style={styles.formSectionWrapper}>
             <View style={styles.buttonWrapper}>
+              {status && (
+                <AlertText
+                  type='error'
+                  icon='error'
+                  title={`Couldn't ${existingPlant ? 'update' : 'submit'} plant`}
+                  subtitle={status}
+                />
+              )}
               <TextButton
                 onPress={handleSubmit}
                 disabled={isSubmitting || values === initialValues}
                 loading={isSubmitting}>
-                Save
+                {existingPlant ? 'Update' : 'Submit'}
               </TextButton>
             </View>
           </View>

@@ -79,7 +79,7 @@ export const Settings = ({ navigation }) => {
 
   const handleAccountUpdate = async (values, { setStatus }) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-    setStatus('')
+    setStatus(undefined)
     const result = await updateCurrentUser(values)
     if (result.error) {
       setStatus(result.error)
@@ -91,7 +91,7 @@ export const Settings = ({ navigation }) => {
 
   const handlePasswordUpdate = async (values, { setStatus }) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-    setStatus('')
+    setStatus(undefined)
     const result = await updateCurrentUser(values)
     if (result.error) {
       setStatus(result.error)
@@ -109,7 +109,7 @@ export const Settings = ({ navigation }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 60 }}>
-      <ImagePicker onSelectImage={onSelectImage} />
+      <ImagePicker currentImage={currentUser?.imageUrl} onSelectImage={onSelectImage} />
 
       <Formik
         initialValues={accountInitialValues}
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   formWrapper: {
-    marginVertical: 30,
+    marginBottom: 20,
   },
   confirmationText: {
     marginVertical: 30,

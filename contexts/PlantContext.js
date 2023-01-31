@@ -1,10 +1,16 @@
+import { useNavigation } from '@react-navigation/native'
 import { createContext, useState } from 'react'
+import { useQueryClient } from 'react-query'
 import axios from 'axios'
 import { API_URL } from '../constants'
+import * as Haptics from 'expo-haptics'
+import { Alert } from 'react-native'
 
 export const PlantContext = createContext(null)
 
 export const PlantProvider = ({ children }) => {
+  const navigation = useNavigation()
+  const queryClient = useQueryClient()
   const [formData, setFormData] = useState({ sort: 'name-asc' })
   const [duplicatePlant, setDuplicatePlant] = useState(undefined)
   const [fetching, setFetching] = useState(false)
@@ -25,6 +31,22 @@ export const PlantProvider = ({ children }) => {
     return res.data
   }
 
+  const deletePlant = async plantId => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    await axios
+      .delete(`${API_URL}/plants/${plantId}`)
+      .then(() => {
+        Alert.alert('Success', 'The plant has been deleted.')
+        navigation.navigate('Browse')
+      })
+      .catch(err => {
+        console.log(err)
+        Alert.alert('Internal Server Error', 'Something went wrong. Please try again later.')
+      })
+    queryClient.invalidateQueries('plants')
+    queryClient.invalidateQueries('plant')
+  }
+
   return (
     <PlantContext.Provider
       value={{
@@ -34,6 +56,7 @@ export const PlantProvider = ({ children }) => {
         fetchPendingPlants,
         duplicatePlant,
         setDuplicatePlant,
+        deletePlant,
         fetching,
         totalResults,
       }}>

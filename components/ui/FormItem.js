@@ -3,7 +3,16 @@ import { Field, ErrorMessage } from 'formik'
 import { MaterialIcons } from '@expo/vector-icons'
 import { COLORS } from '../../GlobalStyles'
 
-export const FormItem = ({ name, label, sublabel, subtext, style, labelStyle, children }) => {
+export const FormItem = ({
+  name,
+  label,
+  sublabel,
+  subtext,
+  style,
+  labelStyle,
+  children,
+  required,
+}) => {
   return (
     <Field>
       {({ form }) => {
@@ -11,14 +20,17 @@ export const FormItem = ({ name, label, sublabel, subtext, style, labelStyle, ch
         return (
           <View style={[styles.wrapper, style]}>
             {label && (
-              <Text style={[styles.label, labelStyle, error && styles.error]}>{label}</Text>
+              <Text style={[styles.label, labelStyle, error && styles.error]}>
+                {label}
+                {required && ' *'}
+              </Text>
             )}
             {sublabel && <Text style={styles.sublabel}>{subtext}</Text>}
             {children}
             <ErrorMessage
               name={name}
               render={msg => (
-                <View style={styles.errorTextWrapper}>
+                <View style={[styles.errorTextWrapper, labelStyle]}>
                   <MaterialIcons name='error-outline' size={14} color={COLORS.error} />
                   <Text style={styles.errorText}>{msg}</Text>
                 </View>

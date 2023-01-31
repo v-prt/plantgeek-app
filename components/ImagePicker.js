@@ -1,19 +1,15 @@
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { StyleSheet, Pressable, Alert, View, Text, Image } from 'react-native'
 import {
   launchImageLibraryAsync,
-  // launchCameraAsync,
   useMediaLibraryPermissions,
   PermissionStatus,
 } from 'expo-image-picker'
-import { UserContext } from '../contexts/UserContext'
 import { COLORS } from '../GlobalStyles'
 import { MaterialIcons } from '@expo/vector-icons'
-const placeholder = require('../assets/images/avatar-placeholder.png')
 
-export const ImagePicker = ({ onSelectImage }) => {
-  const { currentUser } = useContext(UserContext)
-  const [profilePic, setProfilePic] = useState(currentUser?.imageUrl)
+export const ImagePicker = ({ currentImage, onSelectImage }) => {
+  const [image, setImage] = useState(currentImage)
   const [photosPermissionInfo, requestPermission] = useMediaLibraryPermissions()
 
   const verifyPermissions = async () => {
@@ -27,7 +23,7 @@ export const ImagePicker = ({ onSelectImage }) => {
       // user has denied permission
       Alert.alert(
         'Insufficient Permissions',
-        'You need to grant permission for this app to access your media library in order to upload a profile image.',
+        'You need to grant permission for this app to access your media library in order to upload images.',
         [{ text: 'Okay' }]
       )
       return false
@@ -57,44 +53,53 @@ export const ImagePicker = ({ onSelectImage }) => {
       const base64 = result.assets[0].base64
       const file = `data:${fileType};base64,${base64}`
 
-      setProfilePic(uri)
+      setImage(uri)
       onSelectImage(file)
     } else return
   }
 
   return (
-    <View style={styles.imageContainer}>
-      {profilePic ? (
-        <Image style={styles.profilePic} source={{ uri: profilePic }} />
+    <Pressable
+      onPress={photoHandler}
+      style={({ pressed }) => [styles.imageContainer, pressed && styles.pressed]}>
+      {image ? (
+        <Image style={styles.image} source={{ uri: image }} />
       ) : (
-        <Image style={styles.profilePic} source={placeholder} />
+        <View style={styles.image} />
       )}
-      <Pressable onPress={photoHandler} style={styles.button}>
-        <Text style={styles.buttonText}>{profilePic ? 'Change' : 'Upload'} Photo</Text>
+      <View style={styles.textWrapper}>
+        <Text style={styles.buttonText}>{image ? 'Change' : 'Upload'} Photo</Text>
         <MaterialIcons
           style={styles.buttonIcon}
           name='photo-library'
           size='16'
           color={COLORS.primary400}
         />
-      </Pressable>
-    </View>
+      </View>
+    </Pressable>
   )
 }
 
 const styles = StyleSheet.create({
   imageContainer: {
-    marginTop: 20,
+    margin: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  profilePic: {
-    height: 80,
-    width: 80,
-    borderRadius: 40,
-    marginBottom: 10,
+  pressed: {
+    opacity: 0.7,
   },
-  button: {
+  image: {
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    height: 150,
+    width: 150,
+    borderRadius: 20,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: COLORS.primary400,
+    borderStyle: 'dashed',
+  },
+  textWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
   },

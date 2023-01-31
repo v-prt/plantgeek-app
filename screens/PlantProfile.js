@@ -1,6 +1,16 @@
 import { useState, useEffect, useContext } from 'react'
 import { useQuery } from 'react-query'
-import { StyleSheet, ScrollView, View, Text, Image, ActivityIndicator } from 'react-native'
+import {
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  View,
+  Text,
+  Image,
+  Modal,
+  Pressable,
+  ActivityIndicator,
+} from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { COLORS } from '../GlobalStyles'
 import { API_URL } from '../constants'
@@ -9,17 +19,29 @@ import { NeedIndicatorBar } from '../components/ui/NeedIndicatorBar'
 import { PlantInfoTag } from '../components/ui/PlantInfoTag'
 import { PlantActions } from '../components/PlantActions'
 import { IconButton } from '../components/ui/IconButton'
+import { TextButton } from '../components/ui/TextButton'
+import { PlantContext } from '../contexts/PlantContext'
 import { UserContext } from '../contexts/UserContext'
+import { AlertText } from '../components/ui/AlertText'
 
 export const PlantProfile = ({ route, navigation }) => {
   const { slug } = route.params
+  const { deletePlant } = useContext(PlantContext)
   const { currentUser } = useContext(UserContext)
   const [difficulty, setDifficulty] = useState()
   const [toxicity, setToxicity] = useState()
   const [climate, setClimate] = useState()
   const [rarity, setRarity] = useState()
-  // TODO: add delete plant confirmation modal
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+
+  const { data: plant, status } = useQuery(['plant', slug], async () => {
+    try {
+      const { data } = await axios.get(`${API_URL}/plant/${slug}`)
+      return data.plant
+    } catch (err) {
+      if (err.response.status === 404) return null
+    }
+  })
 
   useEffect(() => {
     if (currentUser.role === 'admin') {
@@ -31,7 +53,15 @@ export const PlantProfile = ({ route, navigation }) => {
               size={20}
               color={COLORS.primary100}
               onPress={() => {
-                navigation.navigate('ManagePlant', { plant })
+                navigation.navigate('ManagePlant', { existingPlant: plant })
+              }}
+            />
+            <IconButton
+              icon='content-copy'
+              size={20}
+              color={COLORS.primary100}
+              onPress={() => {
+                navigation.navigate('ManagePlant', { duplicatePlant: plant })
               }}
             />
             <IconButton
@@ -45,15 +75,6 @@ export const PlantProfile = ({ route, navigation }) => {
           </View>
         ),
       })
-    }
-  })
-
-  const { data: plant, status } = useQuery(['plant', slug], async () => {
-    try {
-      const { data } = await axios.get(`${API_URL}/plant/${slug}`)
-      return data.plant
-    } catch (err) {
-      if (err.response.status === 404) return null
     }
   })
 
@@ -147,6 +168,22 @@ export const PlantProfile = ({ route, navigation }) => {
             justifyContent: 'center',
             paddingBottom: 20,
           }}>
+          {plant.review === 'pending' && (
+            <AlertText
+              type='warning'
+              icon='error'
+              title='Pending review'
+              subtitle='This plant is pending review by an admin and is unlisted.'
+            />
+          )}
+          {plant.review === 'rejected' && (
+            <AlertText
+              type='error'
+              icon='error'
+              title='Rejected'
+              subtitle='This plant submission has been rejected by an admin and is unlisted.'
+            />
+          )}
           <LinearGradient
             style={styles.header}
             colors={['#a4e17d', '#95d190']}
@@ -189,9 +226,34 @@ export const PlantProfile = ({ route, navigation }) => {
               <PlantInfoTag text={climate} />
               <PlantInfoTag text={rarity} />
             </View>
-            <Text style={styles.region}>Region of origin: {plant.region || 'Unknown'}</Text>
+            <Text style={styles.origin}>Region of origin: {plant.origin || 'Unknown'}</Text>
           </View>
           <PlantActions plant={plant} />
+
+          {currentUser.role === 'admin' && (
+            <Modal visible={deleteModalVisible} animationType='slide'>
+              <SafeAreaView style={styles.modalWrapper}>
+                <View style={styles.modalInner}>
+                  <View style={styles.modalHeader}>
+                    <Text style={styles.modalTitle}>Delete Plant</Text>
+                    <Pressable onPress={() => setDeleteModalVisible(false)}>
+                      <Text style={styles.buttonText}>Cancel</Text>
+                    </Pressable>
+                  </View>
+                  <Text style={styles.confirmationText}>
+                    Are you sure you want to delete this plant? This action cannot be undone.
+                  </Text>
+                  <View style={styles.plantInfo}>
+                    <Image style={styles.plantImage} source={{ uri: plant.imageUrl }} />
+                    <Text style={styles.plantName}>{plant.primaryName}</Text>
+                  </View>
+                  <TextButton onPress={() => deletePlant(plant._id)} danger>
+                    Delete
+                  </TextButton>
+                </View>
+              </SafeAreaView>
+            </Modal>
+          )}
         </ScrollView>
       )}
     </>
@@ -246,8 +308,50 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     marginVertical: 10,
   },
-  region: {
+  origin: {
     fontFamily: 'Quicksand-Bold',
     opacity: 0.7,
+  },
+  modalWrapper: {
+    backgroundColor: COLORS.primary800,
+    padding: 20,
+    flex: 1,
+  },
+  modalInner: {
+    padding: 20,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 20,
+  },
+  buttonText: {
+    fontFamily: 'Quicksand-Bold',
+    color: COLORS.primary400,
+    fontSize: 16,
+  },
+  confirmationText: {
+    marginTop: 30,
+    fontSize: 18,
+  },
+  plantInfo: {
+    marginTop: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  plantImage: {
+    height: 200,
+    width: 200,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  plantName: {
+    fontFamily: 'Quicksand-Bold',
+    marginVertical: 18,
+    fontSize: 20,
   },
 })
