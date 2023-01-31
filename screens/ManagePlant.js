@@ -98,10 +98,10 @@ export const ManagePlant = ({ route, navigation }) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
     setStatus(undefined)
 
-    if (!currentUser.emailVerified) {
-      // TODO: make plant private instead of preventing submission when email not verified?
-      return
-    }
+    // if (!currentUser.emailVerified) {
+    //   // TODO: make plant private instead of preventing submission when email not verified?
+    //   return
+    // }
 
     if (!newImage && !existingPlant?.imageUrl) {
       setStatus('You must upload an image.')
