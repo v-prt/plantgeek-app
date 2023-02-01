@@ -1,8 +1,11 @@
 import { Pressable, StyleSheet, ActivityIndicator, Text, View } from 'react-native'
 import { COLORS } from '../../GlobalStyles'
+import { MaterialIcons } from '@expo/vector-icons'
 
 export const TextButton = ({
   children,
+  icon,
+  iconColor,
   onPress,
   buttonStyle,
   loading,
@@ -20,7 +23,12 @@ export const TextButton = ({
         {loading ? (
           <ActivityIndicator size='small' color={COLORS.primary100} />
         ) : (
-          <Text style={[styles.buttonText, textStyle]}>{children}</Text>
+          <>
+            {icon && (
+              <MaterialIcons name={icon} color={iconColor} size={16} style={{ marginRight: 8 }} />
+            )}
+            <Text style={[styles.buttonText, textStyle]}>{children}</Text>
+          </>
         )}
       </View>
     </Pressable>
@@ -34,7 +42,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 24,
-    padding: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     marginVertical: 8,
   },
   disabled: {

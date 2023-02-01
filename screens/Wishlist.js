@@ -26,7 +26,7 @@ export const Wishlist = () => {
           <ActivityIndicator size='large' color={COLORS.primary100} />
         </View>
       )}
-      {status === 'success' && <PlantList plants={data} />}
+      {status === 'success' && <PlantList plants={data} listType='wishlist' />}
     </View>
   )
 }

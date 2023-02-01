@@ -109,6 +109,7 @@ export const Browse = ({ navigation }) => {
               plants={data.pages.map(group => group.plants.map(plant => plant)).flat()}
               handleScroll={handleScroll}
               infiniteScroll={handleInfiniteScroll}
+              listType='search'
             />
           )}
         </>
