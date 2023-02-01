@@ -50,6 +50,8 @@ export const Login = ({ navigation }) => {
                   onChangeText: handleChange('username'),
                   value: values.username,
                   autoCapitalize: 'none',
+                  autoComplete: 'username',
+                  textContentType: 'username',
                 }}
               />
             </FormItem>
@@ -60,6 +62,8 @@ export const Login = ({ navigation }) => {
                   onChangeText: handleChange('password'),
                   value: values.password,
                   secureTextEntry: !passwordVisible,
+                  autoComplete: 'password',
+                  textContentType: 'password',
                 }}
                 icon={passwordVisible ? 'eye' : 'eye-off'}
                 iconOnPress={() => {

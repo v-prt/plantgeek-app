@@ -13,7 +13,6 @@ import { AlertText } from '../components/ui/AlertText'
 export const Signup = ({ navigation }) => {
   const { handleSignup } = useContext(UserContext)
   const [passwordVisible, setPasswordVisible] = useState(false)
-  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false)
 
   const validationSchema = yup.object().shape({
     firstName: yup
@@ -34,10 +33,6 @@ export const Signup = ({ navigation }) => {
       .required('Required')
       .matches(/^[a-zA-Z0-9]+$/, 'No special characters or spaces allowed'),
     password: yup.string().min(6, `That's too short`).required('Required'),
-    confirmPassword: yup
-      .string()
-      .oneOf([yup.ref('password'), null], 'Passwords must match')
-      .required('Required'),
   })
 
   const initialValues = {
@@ -82,6 +77,8 @@ export const Signup = ({ navigation }) => {
                     onBlur: handleBlur('firstName'),
                     onChangeText: handleChange('firstName'),
                     value: values.firstName,
+                    autoComplete: 'given-name',
+                    textContentType: 'givenName',
                   }}
                 />
               </FormItem>
@@ -91,6 +88,8 @@ export const Signup = ({ navigation }) => {
                     onBlur: handleBlur('lastName'),
                     onChangeText: handleChange('lastName'),
                     value: values.lastName,
+                    autoComplete: 'family-name',
+                    textContentType: 'familyName',
                   }}
                 />
               </FormItem>
@@ -101,7 +100,8 @@ export const Signup = ({ navigation }) => {
                   onBlur: handleBlur('username'),
                   onChangeText: handleChange('username'),
                   value: values.username,
-                  autoCorrect: false,
+                  autoComplete: 'off',
+                  textContentType: 'username',
                 }}
               />
             </FormItem>
@@ -112,7 +112,8 @@ export const Signup = ({ navigation }) => {
                   onChangeText: handleChange('email'),
                   value: values.email,
                   keyboardType: 'email-address',
-                  autoCapitalize: 'none',
+                  autoComplete: 'email',
+                  textContentType: 'emailAddress',
                 }}
               />
             </FormItem>
@@ -123,24 +124,12 @@ export const Signup = ({ navigation }) => {
                   onChangeText: handleChange('password'),
                   value: values.password,
                   secureTextEntry: !passwordVisible,
+                  autoComplete: 'off',
+                  textContentType: 'newPassword',
                 }}
                 icon={passwordVisible ? 'eye' : 'eye-off'}
                 iconOnPress={() => {
                   setPasswordVisible(!passwordVisible)
-                }}
-              />
-            </FormItem>
-            <FormItem name='confirmPassword' label='Confirm password'>
-              <Input
-                config={{
-                  onBlur: handleBlur('confirmPassword'),
-                  onChangeText: handleChange('confirmPassword'),
-                  value: values.confirmPassword,
-                  secureTextEntry: !confirmPasswordVisible,
-                }}
-                icon={confirmPasswordVisible ? 'eye' : 'eye-off'}
-                iconOnPress={() => {
-                  setConfirmPasswordVisible(!confirmPasswordVisible)
                 }}
               />
             </FormItem>

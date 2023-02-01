@@ -20,7 +20,6 @@ export const ImageLoader = ({ style, source, borderRadius }) => {
           source={source}
           style={[styles.image, { borderRadius }]}
           onLoad={() => {
-            console.log('image loaded')
             setImageLoaded(true)
           }}
         />

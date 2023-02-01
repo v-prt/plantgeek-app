@@ -22,7 +22,6 @@ export const Settings = ({ navigation }) => {
 
   const [currentPasswordVisible, setCurrentPasswordVisible] = useState(false)
   const [newPasswordVisible, setNewPasswordVisible] = useState(false)
-  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false)
 
   useEffect(() => {
     navigation.setOptions({
@@ -45,7 +44,6 @@ export const Settings = ({ navigation }) => {
   const passwordInitialValues = {
     currentPassword: '',
     newPassword: '',
-    confirmPassword: '',
   }
   // #endregion Initial Values
 
@@ -65,10 +63,6 @@ export const Settings = ({ navigation }) => {
   const passwordSchema = yup.object().shape({
     currentPassword: yup.string().required('Required'),
     newPassword: yup.string().min(6, `That's too short`).required('Required'),
-    confirmPassword: yup
-      .string()
-      .required('You must confirm your new password')
-      .oneOf([yup.ref('newPassword'), null], 'Passwords must match'),
   })
   // #endregion Schemas
 
@@ -231,20 +225,6 @@ export const Settings = ({ navigation }) => {
                       icon={newPasswordVisible ? 'eye' : 'eye-off'}
                       iconOnPress={() => {
                         setNewPasswordVisible(!newPasswordVisible)
-                      }}
-                    />
-                  </FormItem>
-                  <FormItem name='confirmPassword' label='Confirm password'>
-                    <Input
-                      config={{
-                        onBlur: handleBlur('confirmPassword'),
-                        onChangeText: handleChange('confirmPassword'),
-                        value: values.confirmPassword,
-                        secureTextEntry: !confirmPasswordVisible,
-                      }}
-                      icon={confirmPasswordVisible ? 'eye' : 'eye-off'}
-                      iconOnPress={() => {
-                        setConfirmPasswordVisible(!confirmPasswordVisible)
                       }}
                     />
                   </FormItem>

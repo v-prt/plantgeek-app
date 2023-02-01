@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { useQuery } from 'react-query'
 import axios from 'axios'
 import { API_URL } from '../constants'
@@ -6,9 +6,8 @@ import { UserContext } from '../contexts/UserContext'
 import { StyleSheet, View, ActivityIndicator } from 'react-native'
 import { COLORS } from '../GlobalStyles'
 import { PlantList } from '../components/PlantList'
-import { IconButton } from '../components/ui/IconButton'
 
-export const Collection = ({ navigation }) => {
+export const Collection = () => {
   const { currentUser } = useContext(UserContext)
 
   const { data, status } = useQuery(['collection', currentUser.plantCollection], async () => {
@@ -18,19 +17,6 @@ export const Collection = ({ navigation }) => {
     } catch (err) {
       return null
     }
-  })
-
-  // TODO: move this to browse screen? or automatically add to user's collection when submitting a plant?
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <IconButton
-          icon='add'
-          color={COLORS.primary100}
-          onPress={() => navigation.navigate('ManagePlant')}
-        />
-      ),
-    })
   })
 
   return (

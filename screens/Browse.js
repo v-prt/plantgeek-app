@@ -81,7 +81,14 @@ export const Browse = ({ navigation }) => {
             </Pressable>
           )}
         </View>
-        <IconButton icon='filter-list' color={COLORS.primary100} onPress={handleFilterMenu} />
+        <View style={styles.buttons}>
+          <IconButton icon='filter-list' color={COLORS.primary100} onPress={handleFilterMenu} />
+          <IconButton
+            icon='add'
+            color={COLORS.primary100}
+            onPress={() => navigation.navigate('ManagePlant')}
+          />
+        </View>
       </View>
       {searchVal ? (
         <SearchList
@@ -140,5 +147,8 @@ const styles = StyleSheet.create({
     color: COLORS.primary100,
     marginLeft: 8,
     flex: 1,
+  },
+  buttons: {
+    flexDirection: 'row',
   },
 })

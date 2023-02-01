@@ -7,12 +7,12 @@ import { StyleSheet, View, Pressable, Text, ActivityIndicator } from 'react-nati
 import { COLORS } from '../GlobalStyles'
 import { PlantList } from '../components/PlantList'
 
-const Approved = ({ currentUser }) => {
+const List = ({ currentUser, reviewStatus }) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery(
-    ['approved-contributions', currentUser._id],
+    [`${reviewStatus}-contributions`, currentUser._id],
     async ({ pageParam }) => {
       const res = await axios.get(`${API_URL}/contributions/${currentUser._id}/${pageParam || 1}`, {
-        params: { review: 'approved' },
+        params: { review: reviewStatus },
       })
       return res.data
     },
@@ -27,43 +27,7 @@ const Approved = ({ currentUser }) => {
       fetchNextPage()
     }
   }
-  return (
-    <View style={styles.list}>
-      {status === 'loading' && (
-        <View style={styles.loading}>
-          <ActivityIndicator size='large' color={COLORS.primary100} />
-        </View>
-      )}
-      {status === 'success' && (
-        <PlantList
-          plants={data.pages.map(group => group.contributions.map(plant => plant)).flat()}
-          infiniteScroll={handleInfiniteScroll}
-        />
-      )}
-    </View>
-  )
-}
 
-const Pending = ({ currentUser }) => {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery(
-    ['pending-contributions', currentUser._id],
-    async ({ pageParam }) => {
-      const res = await axios.get(`${API_URL}/contributions/${currentUser._id}/${pageParam || 1}`, {
-        params: { review: 'pending' },
-      })
-      return res.data
-    },
-    {
-      getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-    }
-  )
-
-  // fetch more plants when scrolled to end
-  const handleInfiniteScroll = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
-    }
-  }
   return (
     <View style={styles.list}>
       {status === 'loading' && (
@@ -99,8 +63,7 @@ export const Contributions = () => {
           <Text style={[styles.btnText, view === 'pending' && styles.activeText]}>Pending</Text>
         </Pressable>
       </View>
-      {view === 'approved' && <Approved currentUser={currentUser} />}
-      {view === 'pending' && <Pending currentUser={currentUser} />}
+      <List currentUser={currentUser} reviewStatus={view} />
     </View>
   )
 }

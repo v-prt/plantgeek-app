@@ -182,7 +182,19 @@ export const ManagePlant = ({ route, navigation }) => {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 60 }}>
+          {!existingPlant && !duplicatePlant && (
+            <View style={styles.infoContainer}>
+              <AlertText
+                type='info'
+                icon='info'
+                title={`Can't find your plant?`}
+                subtitle='Complete this form to add it to your collection. The plant will remain unlisted until it is approved by an admin.'
+              />
+            </View>
+          )}
+
           <ImagePicker currentImage={initialValues.imageUrl} onSelectImage={onSelectImage} />
+
           <View style={styles.formSectionWrapper}>
             <FormItem name='primaryName' label='Botanical name' required>
               <Input
@@ -360,6 +372,10 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     paddingVertical: 20,
+  },
+  infoContainer: {
+    marginVertical: 10,
+    marginHorizontal: 20,
   },
   labelStyle: {
     marginLeft: 20,
