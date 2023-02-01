@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import { StyleSheet, View, Pressable, Image, Text } from 'react-native'
 import { COLORS } from '../GlobalStyles'
+import { ImageLoader } from './ui/ImageLoader'
 
 export const PlantCard = ({ plant }) => {
   const navigation = useNavigation()
@@ -14,7 +15,7 @@ export const PlantCard = ({ plant }) => {
       <Pressable
         style={({ pressed }) => [styles.card, pressed && styles.pressed]}
         onPress={handlePress}>
-        <Image source={{ uri: plant.imageUrl }} style={styles.image} />
+        <ImageLoader source={{ uri: plant.imageUrl }} style={styles.image} borderRadius={10} />
         <View style={styles.info}>
           <Text style={styles.title}>{plant.primaryName}</Text>
           {plant.secondaryName && <Text style={styles.subtitle}>{plant.secondaryName}</Text>}

@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { COLORS } from '../GlobalStyles'
 import { UserContext } from '../contexts/UserContext'
 import moment from 'moment'
+import { ImageLoader } from '../components/ui/ImageLoader'
 const placeholder = require('../assets/images/avatar-placeholder.png')
 
 export const UserProfile = ({ navigation }) => {
@@ -28,9 +29,13 @@ export const UserProfile = ({ navigation }) => {
               </Text>
             </View>
             {currentUser.imageUrl ? (
-              <Image style={styles.profilePic} source={{ uri: currentUser.imageUrl }} />
+              <ImageLoader
+                style={styles.profilePic}
+                source={{ uri: currentUser.imageUrl }}
+                borderRadius={40}
+              />
             ) : (
-              <Image style={styles.profilePic} source={placeholder} />
+              <ImageLoader style={styles.profilePic} source={placeholder} borderRadius={40} />
             )}
           </LinearGradient>
           <Pressable
@@ -74,7 +79,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   profilePic: {
-    borderRadius: 40,
     height: 80,
     width: 80,
   },

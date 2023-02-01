@@ -15,6 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { COLORS } from '../GlobalStyles'
 import { API_URL } from '../constants'
 import axios from 'axios'
+import { ImageLoader } from '../components/ui/ImageLoader'
 import { NeedIndicatorBar } from '../components/ui/NeedIndicatorBar'
 import { PlantInfoTag } from '../components/ui/PlantInfoTag'
 import { PlantActions } from '../components/PlantActions'
@@ -193,7 +194,7 @@ export const PlantProfile = ({ route, navigation }) => {
             {plant.secondaryName && <Text style={styles.secondaryName}>{plant.secondaryName}</Text>}
           </LinearGradient>
           <View style={styles.info}>
-            <Image source={{ uri: plant.imageUrl }} style={styles.image} />
+            <ImageLoader source={{ uri: plant.imageUrl }} style={styles.image} borderRadius={16} />
             <View style={styles.needs}>
               <NeedIndicatorBar
                 icon={require('../assets/images/light.png')}
@@ -244,7 +245,11 @@ export const PlantProfile = ({ route, navigation }) => {
                     Are you sure you want to delete this plant? This action cannot be undone.
                   </Text>
                   <View style={styles.plantInfo}>
-                    <Image style={styles.plantImage} source={{ uri: plant.imageUrl }} />
+                    <ImageLoader
+                      style={styles.plantImage}
+                      source={{ uri: plant.imageUrl }}
+                      borderRadius={10}
+                    />
                     <Text style={styles.plantName}>{plant.primaryName}</Text>
                   </View>
                   <TextButton onPress={() => deletePlant(plant._id)} danger>
@@ -297,7 +302,6 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    borderRadius: 16,
     aspectRatio: 1,
   },
   needs: {
@@ -346,7 +350,6 @@ const styles = StyleSheet.create({
   plantImage: {
     height: 200,
     width: 200,
-    borderRadius: 10,
     marginBottom: 10,
   },
   plantName: {
