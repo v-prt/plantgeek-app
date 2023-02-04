@@ -1,5 +1,14 @@
 import { useState, useContext, useEffect } from 'react'
-import { StyleSheet, Pressable, Text, View, Modal, Alert, SafeAreaView } from 'react-native'
+import {
+  StyleSheet,
+  Pressable,
+  Text,
+  View,
+  Modal,
+  Alert,
+  SafeAreaView,
+  Linking,
+} from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import { UserContext } from '../contexts/UserContext'
 import { COLORS } from '../GlobalStyles'
@@ -163,8 +172,8 @@ export const Settings = ({ navigation }) => {
             <TextButton
               type='primary'
               onPress={handleSubmit}
-              disabled={isSubmitting || values === accountInitialValues}
-              loading={isSubmitting}>
+              loading={isSubmitting}
+              disabled={isSubmitting || values === accountInitialValues}>
               Save
             </TextButton>
           </View>
@@ -276,6 +285,23 @@ export const Settings = ({ navigation }) => {
           </View>
         </SafeAreaView>
       </Modal>
+
+      <View style={styles.footer}>
+        <Text style={styles.link} onPress={() => Linking.openURL('https://www.plantgeek.co/about')}>
+          About
+        </Text>
+        <Text style={styles.divider}>•</Text>
+        <Text style={styles.link} onPress={() => Linking.openURL('https://www.plantgeek.co/terms')}>
+          Terms of Service
+        </Text>
+        <Text style={styles.divider}>•</Text>
+        <Text
+          style={styles.link}
+          onPress={() => Linking.openURL('https://www.plantgeek.co/privacy')}>
+          Privacy Policy
+        </Text>
+      </View>
+      <Text style={styles.logo}>plantgeek</Text>
     </KeyboardAwareScrollView>
   )
 }
@@ -351,5 +377,29 @@ const styles = StyleSheet.create({
   confirmationText: {
     marginVertical: 30,
     fontSize: 18,
+  },
+  footer: {
+    marginTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.2)',
+    paddingTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  link: {
+    fontFamily: 'Quicksand-Bold',
+    color: COLORS.primary400,
+  },
+  divider: {
+    marginHorizontal: 10,
+    opacity: 0.5,
+  },
+  logo: {
+    fontFamily: 'LobsterTwo-Bold',
+    fontSize: 40,
+    opacity: 0.5,
+    textAlign: 'center',
+    marginVertical: 10,
   },
 })

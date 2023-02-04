@@ -135,7 +135,11 @@ export const Signup = ({ navigation }) => {
               />
             </FormItem>
             <View style={styles.buttons}>
-              <TextButton type='primary' onPress={handleSubmit} loading={isSubmitting}>
+              <TextButton
+                type='primary'
+                onPress={handleSubmit}
+                loading={isSubmitting}
+                disabled={isSubmitting}>
                 Create Account
               </TextButton>
               <TextButton

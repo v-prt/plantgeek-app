@@ -34,7 +34,7 @@ export const TextButton = ({
       style={({ pressed }) => [pressed && styles.pressed, disabled && styles.disabled]}>
       <View style={[styles.button, buttonStyle, danger && styles.dangerButton]}>
         {loading ? (
-          <ActivityIndicator size={18} color={COLORS.primary100} />
+          <ActivityIndicator size={18} color={COLORS.primary800} />
         ) : (
           <>
             {icon && (

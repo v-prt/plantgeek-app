@@ -73,7 +73,11 @@ export const Login = ({ navigation }) => {
               />
             </FormItem>
             <View style={styles.buttons}>
-              <TextButton type='primary' onPress={handleSubmit} loading={isSubmitting}>
+              <TextButton
+                type='primary'
+                onPress={handleSubmit}
+                loading={isSubmitting}
+                disabled={isSubmitting}>
                 Log In
               </TextButton>
               <TextButton type='flat' onPress={() => navigation.navigate('Signup')}>
