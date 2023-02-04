@@ -3,31 +3,44 @@ import { COLORS } from '../../GlobalStyles'
 import { MaterialIcons } from '@expo/vector-icons'
 
 export const TextButton = ({
+  type,
   children,
   icon,
   iconColor,
   onPress,
-  buttonStyle,
   loading,
-  textStyle,
   disabled,
   danger,
 }) => {
+  const buttonStyle =
+    type === 'primary'
+      ? styles.primaryButton
+      : type === 'secondary'
+      ? styles.secondaryButton
+      : styles.flatButton
+
+  const textStyle =
+    type === 'primary'
+      ? styles.primaryText
+      : type === 'secondary'
+      ? styles.secondaryText
+      : styles.flatText
+
   return (
     <Pressable
       onPress={() => {
         if (!disabled) onPress()
       }}
       style={({ pressed }) => [pressed && styles.pressed, disabled && styles.disabled]}>
-      <View style={[styles.button, buttonStyle, danger && styles.danger]}>
+      <View style={[styles.button, buttonStyle, danger && styles.dangerButton]}>
         {loading ? (
-          <ActivityIndicator size='small' color={COLORS.primary100} />
+          <ActivityIndicator size={18} color={COLORS.primary100} />
         ) : (
           <>
             {icon && (
-              <MaterialIcons name={icon} color={iconColor} size={16} style={{ marginRight: 8 }} />
+              <MaterialIcons name={icon} color={iconColor} size={18} style={{ marginRight: 8 }} />
             )}
-            <Text style={[styles.buttonText, textStyle]}>{children}</Text>
+            <Text style={[styles.text, textStyle, danger && styles.dangerText]}>{children}</Text>
           </>
         )}
       </View>
@@ -37,7 +50,6 @@ export const TextButton = ({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: COLORS.primary400,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -45,20 +57,43 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginVertical: 8,
+    height: 45,
   },
-  disabled: {
-    opacity: 0.5,
-  },
-  danger: {
-    backgroundColor: COLORS.error,
-  },
-  buttonText: {
-    color: COLORS.primary800,
+  text: {
     fontFamily: 'Quicksand-Bold',
     textAlign: 'center',
     fontSize: 18,
   },
+  primaryButton: {
+    backgroundColor: COLORS.primary400,
+  },
+  primaryText: {
+    color: COLORS.primary800,
+  },
+  secondaryButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: COLORS.primary400,
+  },
+  secondaryText: {
+    color: COLORS.primary400,
+  },
+  flatButton: {
+    backgroundColor: 'transparent',
+  },
+  flatText: {
+    color: COLORS.primary400,
+  },
   pressed: {
     opacity: 0.7,
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  dangerButton: {
+    backgroundColor: COLORS.error,
+  },
+  dangerText: {
+    color: COLORS.primary800,
   },
 })

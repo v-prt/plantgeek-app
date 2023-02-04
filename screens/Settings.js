@@ -161,6 +161,7 @@ export const Settings = ({ navigation }) => {
               />
             </FormItem>
             <TextButton
+              type='primary'
               onPress={handleSubmit}
               disabled={isSubmitting || values === accountInitialValues}
               loading={isSubmitting}>
@@ -229,7 +230,11 @@ export const Settings = ({ navigation }) => {
                     />
                   </FormItem>
                 </View>
-                <TextButton onPress={handleSubmit} loading={isSubmitting} disabled={isSubmitting}>
+                <TextButton
+                  type='primary'
+                  onPress={handleSubmit}
+                  loading={isSubmitting}
+                  disabled={isSubmitting}>
                   Submit
                 </TextButton>
               </View>
@@ -334,6 +339,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 20,
   },
   modalTitle: {
     fontFamily: 'Quicksand-Bold',

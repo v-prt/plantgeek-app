@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, Text } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import { Formik } from 'formik'
 import * as yup from 'yup'
@@ -54,6 +54,7 @@ export const Signup = ({ navigation }) => {
     <KeyboardAwareScrollView
       style={styles.screen}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <Text style={styles.logo}>plantgeek</Text>
       <Formik
         validationSchema={validationSchema}
         initialValues={initialValues}
@@ -134,15 +135,14 @@ export const Signup = ({ navigation }) => {
               />
             </FormItem>
             <View style={styles.buttons}>
-              <TextButton onPress={handleSubmit} loading={isSubmitting}>
+              <TextButton type='primary' onPress={handleSubmit} loading={isSubmitting}>
                 Create Account
               </TextButton>
               <TextButton
+                type='flat'
                 onPress={() => {
                   navigation.navigate('Login')
-                }}
-                buttonStyle={styles.flatButton}
-                textStyle={styles.flatButtonText}>
+                }}>
                 Log In Instead
               </TextButton>
             </View>
@@ -159,6 +159,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
+  logo: {
+    fontFamily: 'LobsterTwo-Bold',
+    color: '#fff',
+    fontSize: 40,
+    marginBottom: 20,
+  },
   formRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -168,13 +174,5 @@ const styles = StyleSheet.create({
   },
   buttons: {
     marginVertical: 16,
-  },
-  flatButton: {
-    backgroundColor: 'transparent',
-  },
-  flatButtonText: {
-    fontFamily: 'Quicksand-Regular',
-    fontSize: 16,
-    color: COLORS.primary300,
   },
 })

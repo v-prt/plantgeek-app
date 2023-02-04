@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react'
-import { StyleSheet, View, Alert, KeyboardAvoidingView, Platform } from 'react-native'
+import { StyleSheet, KeyboardAvoidingView, View, Text, Alert, Platform } from 'react-native'
 import * as yup from 'yup'
 import { Formik } from 'formik'
 import { UserContext } from '../contexts/UserContext'
@@ -35,6 +35,7 @@ export const Login = ({ navigation }) => {
     <KeyboardAvoidingView
       style={styles.screen}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <Text style={styles.logo}>plantgeek</Text>
       <Formik
         validationSchema={validationSchema}
         initialValues={initialValues}
@@ -72,13 +73,10 @@ export const Login = ({ navigation }) => {
               />
             </FormItem>
             <View style={styles.buttons}>
-              <TextButton onPress={handleSubmit} loading={isSubmitting}>
+              <TextButton type='primary' onPress={handleSubmit} loading={isSubmitting}>
                 Log In
               </TextButton>
-              <TextButton
-                onPress={() => navigation.navigate('Signup')}
-                buttonStyle={styles.flatButton}
-                textStyle={styles.flatButtonText}>
+              <TextButton type='flat' onPress={() => navigation.navigate('Signup')}>
                 Sign Up Instead
               </TextButton>
             </View>
@@ -95,16 +93,14 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
+  logo: {
+    fontFamily: 'LobsterTwo-Bold',
+    color: '#fff',
+    fontSize: 40,
+    marginBottom: 20,
+  },
   buttons: {
     marginVertical: 16,
-  },
-  flatButton: {
-    backgroundColor: 'transparent',
-  },
-  flatButtonText: {
-    fontFamily: 'Quicksand-Regular',
-    fontSize: 16,
-    color: COLORS.primary300,
   },
   signUpSuccess: {
     marginBottom: 40,

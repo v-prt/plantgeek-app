@@ -75,16 +75,18 @@ export const Contributions = ({ navigation }) => {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.toggleWrapper}>
+      <View style={styles.toggles}>
         <Pressable
           onPress={() => setView('approved')}
-          style={[styles.toggleBtn, view === 'approved' && styles.activeBtn]}>
-          <Text style={[styles.btnText, view === 'approved' && styles.activeText]}>Approved</Text>
+          style={[styles.toggleButton, view === 'approved' && styles.activeBtn]}>
+          <Text style={[styles.toggleText, view === 'approved' && styles.activeText]}>
+            Approved
+          </Text>
         </Pressable>
         <Pressable
           onPress={() => setView('pending')}
-          style={[styles.toggleBtn, view === 'pending' && styles.activeBtn]}>
-          <Text style={[styles.btnText, view === 'pending' && styles.activeText]}>Pending</Text>
+          style={[styles.toggleButton, view === 'pending' && styles.activeBtn]}>
+          <Text style={[styles.toggleText, view === 'pending' && styles.activeText]}>Pending</Text>
         </Pressable>
       </View>
       <List currentUser={currentUser} reviewStatus={view} />
@@ -103,6 +105,7 @@ export const Contributions = ({ navigation }) => {
               collection in order to set up watering reminders.
             </Text>
             <TextButton
+              type='primary'
               onPress={() => {
                 setInfoModalVisible(false)
                 navigation.navigate('ManagePlant')
@@ -130,12 +133,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  toggleWrapper: {
+  toggles: {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255,255,255,0.3)',
   },
-  toggleBtn: {
+  toggleButton: {
     padding: 10,
     backgroundColor: 'rgba(255,255,255,0.1)',
     flex: 1,
@@ -145,7 +148,7 @@ const styles = StyleSheet.create({
   activeBtn: {
     backgroundColor: 'rgba(255,255,255,0.2)',
   },
-  btnText: {
+  toggleText: {
     fontSize: 14,
     textTransform: 'uppercase',
   },

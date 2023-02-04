@@ -355,6 +355,7 @@ export const ManagePlant = ({ route, navigation }) => {
                 />
               )}
               <TextButton
+                type='primary'
                 onPress={handleSubmit}
                 disabled={isSubmitting || values === initialValues}
                 loading={isSubmitting}>

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "plantgeek-app",
-    "slug": "plantgeek-app",
+    "name": "plantgeek",
+    "slug": "plantgeek",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

@@ -1,6 +1,6 @@
-import { StyleSheet, Text } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { COLORS } from '../GlobalStyles'
+import { Welcome } from '../screens/Welcome'
 import { Login } from '../screens/Login'
 import { Signup } from '../screens/Signup'
 
@@ -16,18 +16,10 @@ export const UnauthenticatedStack = () => {
         headerTintColor: COLORS.primary100,
         headerShadowVisible: false,
         headerTitle: '',
-        headerLeft: () => <Text style={styles.logo}>plantgeek</Text>,
       }}>
+      <Stack.Screen name='Welcome' component={Welcome} options={{ headerShown: false }} />
       <Stack.Screen name='Login' component={Login} />
       <Stack.Screen name='Signup' component={Signup} />
     </Stack.Navigator>
   )
 }
-
-const styles = StyleSheet.create({
-  logo: {
-    fontFamily: 'LobsterTwo-Bold',
-    color: '#fff',
-    fontSize: 30,
-  },
-})

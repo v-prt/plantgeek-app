@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { StyleSheet, FlatList, View, Text } from 'react-native'
+import { StyleSheet, FlatList, KeyboardAvoidingView, ScrollView, View, Text } from 'react-native'
 import { PlantContext } from '../contexts/PlantContext'
 import { COLORS } from '../GlobalStyles'
 import { PlantCard } from './PlantCard'
@@ -30,30 +30,36 @@ export const PlantList = ({ plants, handleScroll, infiniteScroll, listType }) =>
       onScroll={handleScroll}
     />
   ) : (
-    <View style={styles.noResultsWrapper}>
-      <Text style={styles.noResultsText}>{noResultsText()}</Text>
-      {(listType === 'collection' || listType === 'wishlist') && (
-        <TextButton
-          onPress={() => navigation.navigate('Browse')}
-          icon='search'
-          iconColor={COLORS.primary800}>
-          Browse Plants
-        </TextButton>
-      )}
-      {listType === 'search' && (
-        <View style={styles.buttons}>
-          <TextButton onPress={() => setFormData({ sort: 'name-asc' })}>Clear Search</TextButton>
+    <KeyboardAvoidingView
+      style={styles.noResults}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <ScrollView contentContainerStyle={styles.noResults} keyboardShouldPersistTaps='handled'>
+        <Text style={styles.noResultsText}>{noResultsText()}</Text>
+        {(listType === 'collection' || listType === 'wishlist') && (
           <TextButton
-            onPress={() => navigation.navigate('ManagePlant')}
-            icon='add'
-            iconColor={COLORS.primary100}
-            buttonStyle={styles.flatButton}
-            textStyle={styles.flatButtonText}>
-            Add New Plant
+            type='primary'
+            onPress={() => navigation.navigate('Browse')}
+            icon='search'
+            iconColor={COLORS.primary800}>
+            Browse Plants
           </TextButton>
-        </View>
-      )}
-    </View>
+        )}
+        {listType === 'search' && (
+          <View style={styles.buttons}>
+            <TextButton type='primary' onPress={() => setFormData({ sort: 'name-asc' })}>
+              Clear Search
+            </TextButton>
+            <TextButton
+              type='flat'
+              onPress={() => navigation.navigate('ManagePlant')}
+              icon='add'
+              iconColor={COLORS.primary400}>
+              Add New Plant
+            </TextButton>
+          </View>
+        )}
+      </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 
@@ -63,7 +69,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 10,
   },
-  noResultsWrapper: {
+  noResults: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -72,13 +78,5 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     fontSize: 16,
     marginBottom: 15,
-  },
-  flatButton: {
-    backgroundColor: 'transparent',
-  },
-  flatButtonText: {
-    fontFamily: 'Quicksand-Regular',
-    fontSize: 16,
-    color: COLORS.primary300,
   },
 })
