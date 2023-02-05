@@ -28,6 +28,8 @@ const ExistingReminder = ({ type, reminders }) => {
             setInitialValues({
               type,
               dateDue: reminders?.find(reminder => reminder.type === type).dateDue,
+              frequencyNumber: reminders?.find(reminder => reminder.type === type).frequencyNumber,
+              frequencyOption: reminders?.find(reminder => reminder.type === type).frequencyOption,
             })
             setModalVisible(true)
           }}
@@ -50,7 +52,9 @@ const NewReminder = ({ type, setEditMode, setInitialValues, setModalVisible }) =
           setEditMode(false)
           setInitialValues({
             type,
-            dateDue: '',
+            dateDue: new Date(),
+            frequencyNumber: 1,
+            frequencyOption: 'Days',
           })
           setModalVisible(true)
         }}
@@ -65,65 +69,52 @@ export const Reminders = ({ plant }) => {
   const inCollection = currentUser.plantCollection?.includes(plant._id)
   const [editMode, setEditMode] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
-  const [initialValues, setInitialValues] = useState({
-    type: '',
-    dateDue: '',
-  })
+  const [initialValues, setInitialValues] = useState(undefined)
 
   const { data: reminders, status } = useQuery(['reminders'], async () => {
     const { data } = await axios.get(`${API_URL}/plant-reminders/${plant._id}/${currentUser._id}`)
     return data.reminders
   })
 
-  return (
+  return inCollection ? (
     <View style={styles.wrapper}>
-      <Text style={styles.title}>Reminders</Text>
-      {inCollection ? (
-        <>
-          {status === 'loading' && <ActivityIndicator size='small' color={COLORS.primary100} />}
-          {status === 'success' && (
-            <View style={styles.buttons}>
-              {/* TODO: 
-              - if reminder is set for that type, pull reminder to right to complete and pull to left to edit/delete
+      <Text style={styles.title}>Schedule</Text>
+      {status === 'loading' && <ActivityIndicator size='small' color={COLORS.primary100} />}
+      {status === 'success' && (
+        <View style={styles.buttons}>
+          {/* TODO: 
+              - if reminder is set for that type, click to open modal and edit/delete
               */}
-              {reminders?.find(reminder => reminder.type === 'water') ? (
-                <ExistingReminder type='water' reminders={reminders} />
-              ) : (
-                <NewReminder
-                  type='water'
-                  setEditMode={setEditMode}
-                  setInitialValues={setInitialValues}
-                  setModalVisible={setModalVisible}
-                />
-              )}
-              {reminders?.find(reminder => reminder.type === 'fertilize') ? (
-                <ExistingReminder type='fertilize' reminders={reminders} />
-              ) : (
-                <NewReminder
-                  type='fertilize'
-                  setEditMode={setEditMode}
-                  setInitialValues={setInitialValues}
-                  setModalVisible={setModalVisible}
-                />
-              )}
-              {reminders?.find(reminder => reminder.type === 'repot') ? (
-                <ExistingReminder type='repot' reminders={reminders} />
-              ) : (
-                <NewReminder
-                  type='repot'
-                  setEditMode={setEditMode}
-                  setInitialValues={setInitialValues}
-                  setModalVisible={setModalVisible}
-                />
-              )}
-            </View>
+          {reminders?.find(reminder => reminder.type === 'water') ? (
+            <ExistingReminder type='water' reminders={reminders} />
+          ) : (
+            <NewReminder
+              type='water'
+              setEditMode={setEditMode}
+              setInitialValues={setInitialValues}
+              setModalVisible={setModalVisible}
+            />
           )}
-        </>
-      ) : (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.infoText}>
-            Add this plant to your collection to set recurring reminders.
-          </Text>
+          {reminders?.find(reminder => reminder.type === 'fertilize') ? (
+            <ExistingReminder type='fertilize' reminders={reminders} />
+          ) : (
+            <NewReminder
+              type='fertilize'
+              setEditMode={setEditMode}
+              setInitialValues={setInitialValues}
+              setModalVisible={setModalVisible}
+            />
+          )}
+          {reminders?.find(reminder => reminder.type === 'repot') ? (
+            <ExistingReminder type='repot' reminders={reminders} />
+          ) : (
+            <NewReminder
+              type='repot'
+              setEditMode={setEditMode}
+              setInitialValues={setInitialValues}
+              setModalVisible={setModalVisible}
+            />
+          )}
         </View>
       )}
 
@@ -131,7 +122,7 @@ export const Reminders = ({ plant }) => {
         <SafeAreaView style={styles.modalWrapper}>
           <View style={styles.modalInner}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{editMode ? 'Edit' : 'New'} Reminder</Text>
+              <Text style={styles.modalTitle}>{editMode ? 'Edit' : 'New'} Schedule</Text>
               <Pressable onPress={() => setModalVisible(false)}>
                 <Text style={styles.buttonText}>Cancel</Text>
               </Pressable>
@@ -141,7 +132,7 @@ export const Reminders = ({ plant }) => {
         </SafeAreaView>
       </Modal>
     </View>
-  )
+  ) : null
 }
 
 const styles = StyleSheet.create({
@@ -156,16 +147,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Quicksand-Bold',
     fontSize: 20,
     marginBottom: 20,
-  },
-  infoWrapper: {
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
-    borderRadius: 5,
-    borderStyle: 'dashed',
-    padding: 10,
-  },
-  infoText: {
-    opacity: 0.7,
   },
   reminderWrapper: {
     borderWidth: 1,
