@@ -50,6 +50,7 @@ export const PlantActions = ({ plant }) => {
           <>
             <Pressable
               onPress={() => {
+                //  TODO: if removing from collection, ask user to confirm first (will delete related reminders)
                 setFieldValue(
                   'owned',
                   !owned
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
   wrapper: {
     width: '100%',
     backgroundColor: 'rgba(255,255,255,0.1)',
-    marginVertical: 20,
+    marginBottom: 20,
     borderRadius: 16,
   },
   actionButton: {

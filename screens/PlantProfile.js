@@ -6,7 +6,6 @@ import {
   ScrollView,
   View,
   Text,
-  Image,
   Modal,
   Pressable,
   ActivityIndicator,
@@ -15,15 +14,16 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { COLORS } from '../GlobalStyles'
 import { API_URL } from '../constants'
 import axios from 'axios'
+import { PlantContext } from '../contexts/PlantContext'
+import { UserContext } from '../contexts/UserContext'
 import { ImageLoader } from '../components/ui/ImageLoader'
+import { IconButton } from '../components/ui/IconButton'
+import { TextButton } from '../components/ui/TextButton'
+import { AlertText } from '../components/ui/AlertText'
 import { NeedIndicatorBar } from '../components/ui/NeedIndicatorBar'
 import { PlantInfoTag } from '../components/ui/PlantInfoTag'
 import { PlantActions } from '../components/PlantActions'
-import { IconButton } from '../components/ui/IconButton'
-import { TextButton } from '../components/ui/TextButton'
-import { PlantContext } from '../contexts/PlantContext'
-import { UserContext } from '../contexts/UserContext'
-import { AlertText } from '../components/ui/AlertText'
+import { Reminders } from '../components/Reminders'
 
 export const PlantProfile = ({ route, navigation }) => {
   const { slug } = route.params
@@ -229,7 +229,9 @@ export const PlantProfile = ({ route, navigation }) => {
             </View>
             <Text style={styles.origin}>Region of origin: {plant.origin || 'Unknown'}</Text>
           </View>
+
           <PlantActions plant={plant} />
+          <Reminders plant={plant} />
 
           {currentUser.role === 'admin' && (
             <Modal visible={deleteModalVisible} animationType='slide'>
@@ -282,7 +284,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 20,
     borderRadius: 16,
-    marginBottom: 10,
+    marginBottom: 20,
   },
   primaryName: {
     color: COLORS.primary800,
@@ -299,6 +301,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     padding: 20,
     borderRadius: 16,
+    marginBottom: 20,
   },
   image: {
     width: '100%',

@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   footerText: {
+    color: COLORS.primary100,
     marginTop: 20,
     fontSize: 13,
     opacity: 0.7,
