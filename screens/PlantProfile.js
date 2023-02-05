@@ -23,7 +23,7 @@ import { AlertText } from '../components/ui/AlertText'
 import { NeedIndicatorBar } from '../components/ui/NeedIndicatorBar'
 import { PlantInfoTag } from '../components/ui/PlantInfoTag'
 import { PlantActions } from '../components/PlantActions'
-import { Reminders } from '../components/Reminders'
+import { Reminders } from '../components/reminders/Reminders'
 
 export const PlantProfile = ({ route, navigation }) => {
   const { slug } = route.params
