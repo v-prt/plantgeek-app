@@ -1,7 +1,10 @@
 import { Formik } from 'formik'
 import { useEffect, useState } from 'react'
+import { useQueryClient } from 'react-query'
 import { StyleSheet, View, Text } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
+import { API_URL } from '../../constants'
+import axios from 'axios'
 import * as yup from 'yup'
 import { COLORS } from '../../GlobalStyles'
 import { ImageLoader } from '../ui/ImageLoader'
@@ -10,33 +13,41 @@ import { IconButton } from '../ui/IconButton'
 import { TextButton } from '../ui/TextButton'
 import * as Haptics from 'expo-haptics'
 
-export const RemindersForm = ({ initialValues, editMode, plant }) => {
-  const [selectedDate, setSelectedDate] = useState(initialValues.dateDue)
+export const RemindersForm = ({
+  editMode,
+  initialValues,
+  plant,
+  currentUserId,
+  setModalVisible,
+}) => {
+  const queryClient = new useQueryClient()
+  const [selectedDate, setSelectedDate] = useState(new Date(initialValues.dateDue))
   const [recommendation, setRecommendation] = useState('')
+  const [selectedNumber, setSelectedNumber] = useState(initialValues.frequencyNumber)
+  const [selectedUnit, setSelectedUnit] = useState(initialValues.frequencyUnit)
+
   const minNumber = 1
   const maxNumber = 99
-  const options = ['Days', 'Weeks', 'Months', 'Years']
-  const [selectedNumber, setSelectedNumber] = useState(initialValues.frequencyNumber)
-  const [selectedOption, setSelectedOption] = useState(initialValues.frequencyOption)
+  const units = ['Days', 'Weeks', 'Months', 'Years']
 
   const schema = yup.object().shape({
     type: yup.string().required('Required'),
     dateDue: yup.date().required('Required'),
     frequencyNumber: yup.number().required('Required').min(minNumber).max(maxNumber),
-    frequencyOption: yup.string().required('Required'),
+    frequencyUnit: yup.string().required('Required'),
   })
 
   useEffect(() => {
     // SETTING RECOMMENDATION
     // TODO: refactor this to be more DRY
-    // TODO: set initial values for frequencyNumber and frequencyOption
+    // TODO: set initial values for frequencyNumber and frequencyUnit
     if (initialValues.type === 'water') {
       if (plant.water === 'high' || plant.water === 'medium to high') {
-        setRecommendation('Water lightly every 3-5 days (when soil feels dry)')
+        setRecommendation('Water lightly every 3-5 days (when soil feels dry to touch)')
       } else if (plant.water === 'medium') {
-        setRecommendation('Water moderately every 5-10 days (when soil feels dry)')
+        setRecommendation('Water moderately every 5-10 days (when soil partly dry)')
       } else if (plant.water === 'low to medium' || plant.water === 'low') {
-        setRecommendation('Water generously every 10-14 days (when soil feels dry)')
+        setRecommendation('Water generously every 10-14 days (when soil mostly dry)')
       }
     }
 
@@ -52,11 +63,14 @@ export const RemindersForm = ({ initialValues, editMode, plant }) => {
 
     if (initialValues.type === 'repot') {
       if (plant.water === 'high' || plant.water === 'medium to high') {
-        setRecommendation('Repot every 6-8 months (1-2 inches larger)')
+        // plants requiring more water tend to have a fast growth rate
+        setRecommendation('Repot every 8-12 months depending on maturity (1-2 inches larger)')
       } else if (plant.water === 'medium') {
-        setRecommendation('Repot every 8-12 months (1-2 inches larger)')
+        // moderate growth rate
+        setRecommendation('Repot every 12-18 months depending on maturity (1-2 inches larger)')
       } else if (plant.water === 'low to medium' || plant.water === 'low') {
-        setRecommendation('Repot every 1-2 years (1-2 inches larger)')
+        // slow growth rate
+        setRecommendation('Repot every 2-3 years depending on maturity (1-2 inches larger)')
       }
     }
   }, [plant.water, initialValues.type])
@@ -76,23 +90,40 @@ export const RemindersForm = ({ initialValues, editMode, plant }) => {
     }
   }
 
-  const handleOptionChange = (direction, setFieldValue) => {
+  const handleUnitChange = (direction, setFieldValue) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     if (direction === 'increase') {
-      if (options.indexOf(selectedOption) < options.length - 1) {
-        setFieldValue('frequencyOption', options[options.indexOf(selectedOption) + 1])
-        setSelectedOption(options[options.indexOf(selectedOption) + 1])
+      if (units.indexOf(selectedUnit) < units.length - 1) {
+        setFieldValue('frequencyUnit', units[units.indexOf(selectedUnit) + 1])
+        setSelectedUnit(units[units.indexOf(selectedUnit) + 1])
       }
     } else if (direction === 'decrease') {
-      if (options.indexOf(selectedOption) > 0) {
-        setFieldValue('frequencyOption', options[options.indexOf(selectedOption) - 1])
-        setSelectedOption(options[options.indexOf(selectedOption) - 1])
+      if (units.indexOf(selectedUnit) > 0) {
+        setFieldValue('frequencyUnit', units[units.indexOf(selectedUnit) - 1])
+        setSelectedUnit(units[units.indexOf(selectedUnit) - 1])
       }
     }
   }
 
-  const handleReminder = values => {
-    console.log(values)
+  const handleReminder = async values => {
+    const data = {
+      ...values,
+      userId: currentUserId,
+      plantId: plant._id,
+    }
+
+    if (editMode) {
+      const reminderId = editMode
+      // update reminder
+      const result = await axios.put(`${API_URL}/reminders/${reminderId}`, data)
+      queryClient.invalidateQueries('reminders')
+      if (result) setModalVisible(false)
+    } else {
+      // create reminder
+      const result = await axios.post(`${API_URL}/reminders`, data)
+      queryClient.invalidateQueries('reminders')
+      if (result) setModalVisible(false)
+    }
   }
 
   return (
@@ -127,10 +158,9 @@ export const RemindersForm = ({ initialValues, editMode, plant }) => {
               is24Hour={true}
               accentColor={COLORS.primary400}
               style={{ flex: 1 }}
-              onChange={(event, selectedDate) => {
-                const currentDate = selectedDate || date
-                setSelectedDate(currentDate)
-                setFieldValue('dateDue', currentDate)
+              onChange={(event, date) => {
+                setSelectedDate(date)
+                setFieldValue('dateDue', date)
               }}
             />
           </View>
@@ -156,6 +186,7 @@ export const RemindersForm = ({ initialValues, editMode, plant }) => {
                   onPress={() => {
                     handleNumberChange('decrease', setFieldValue)
                   }}
+                  disabled={selectedNumber === minNumber}
                 />
                 <Text style={styles.pickerText}>{values.frequencyNumber}</Text>
                 <IconButton
@@ -178,11 +209,11 @@ export const RemindersForm = ({ initialValues, editMode, plant }) => {
                   color={COLORS.primary400}
                   style={styles.pickerIcon}
                   onPress={() => {
-                    handleOptionChange('decrease', setFieldValue)
+                    handleUnitChange('decrease', setFieldValue)
                   }}
-                  disabled={selectedOption === 'Days'}
+                  disabled={selectedUnit === 'Days'}
                 />
-                <Text style={styles.pickerText}>{values.frequencyOption}</Text>
+                <Text style={styles.pickerText}>{values.frequencyUnit}</Text>
                 <IconButton
                   small
                   icon='add'
@@ -190,9 +221,9 @@ export const RemindersForm = ({ initialValues, editMode, plant }) => {
                   color={COLORS.primary400}
                   style={styles.pickerIcon}
                   onPress={() => {
-                    handleOptionChange('increase', setFieldValue)
+                    handleUnitChange('increase', setFieldValue)
                   }}
-                  disabled={selectedOption === 'Years'}
+                  disabled={selectedUnit === 'Years'}
                 />
               </View>
 
@@ -288,7 +319,7 @@ const styles = StyleSheet.create({
   },
   pickerText: {
     fontFamily: 'Quicksand-Bold',
-    fontSize: 16,
+    fontSize: 18,
     textAlign: 'center',
   },
   recommendationWrapper: {

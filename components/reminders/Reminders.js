@@ -11,31 +11,55 @@ import {
 } from 'react-native'
 import { API_URL } from '../../constants'
 import axios from 'axios'
+import moment from 'moment'
 import { UserContext } from '../../contexts/UserContext'
 import { COLORS } from '../../GlobalStyles'
 import { IconButton } from '../ui/IconButton'
 import { RemindersForm } from './RemindersForm'
+import { MaterialIcons } from '@expo/vector-icons'
 
-const ExistingReminder = ({ type, reminders }) => {
+const ExistingReminder = ({ type, reminders, setEditMode, setInitialValues, setModalVisible }) => {
+  const reminderId = reminders?.find(reminder => reminder.type === type)?._id
+
+  const due = moment(reminders?.find(reminder => reminder.type === type).dateDue).isBefore(
+    new Date()
+  )
+
   return (
     <View style={styles.reminderWrapper}>
-      <Text style={styles.reminderText}>{type}</Text>
+      <View>
+        <Text style={styles.reminderText}>{type}</Text>
+        <View style={styles.dateWrapper}>
+          <MaterialIcons
+            name='calendar-today'
+            size={14}
+            color={due ? COLORS.error : COLORS.primary100}
+            style={styles.dateIcon}
+          />
+          <Text style={[styles.dateText, due && styles.due]}>
+            {/* TODO: format date to say yesterday, today, or tomorrow if applicable */}
+            {/* TODO: add frequency */}
+            {moment(reminders?.find(reminder => reminder.type === type).dateDue).format('ll')}
+          </Text>
+        </View>
+      </View>
+
       <View style={styles.reminderButtons}>
         <IconButton
-          icon='edit'
+          small
+          icon='info-outline'
+          color={COLORS.primary400}
           onPress={() => {
-            setEditMode(true)
+            setEditMode(reminderId)
             setInitialValues({
               type,
               dateDue: reminders?.find(reminder => reminder.type === type).dateDue,
               frequencyNumber: reminders?.find(reminder => reminder.type === type).frequencyNumber,
-              frequencyOption: reminders?.find(reminder => reminder.type === type).frequencyOption,
+              frequencyUnit: reminders?.find(reminder => reminder.type === type).frequencyUnit,
             })
             setModalVisible(true)
           }}
         />
-        <IconButton icon='delete' onPress={() => {}} />
-        <IconButton icon='check' onPress={() => {}} />
       </View>
     </View>
   )
@@ -46,19 +70,19 @@ const NewReminder = ({ type, setEditMode, setInitialValues, setModalVisible }) =
     <View style={[styles.reminderWrapper, styles.newReminderWrapper]}>
       <Text style={[styles.reminderText, styles.newReminderText]}>{type}</Text>
       <IconButton
+        small
         icon='add-alert'
-        color={COLORS.primary400}
+        color={COLORS.primary100}
         onPress={() => {
           setEditMode(false)
           setInitialValues({
             type,
             dateDue: new Date(),
             frequencyNumber: 1,
-            frequencyOption: 'Days',
+            frequencyUnit: 'Days',
           })
           setModalVisible(true)
         }}
-        small
       />
     </View>
   )
@@ -82,11 +106,14 @@ export const Reminders = ({ plant }) => {
       {status === 'loading' && <ActivityIndicator size='small' color={COLORS.primary100} />}
       {status === 'success' && (
         <View style={styles.buttons}>
-          {/* TODO: 
-              - if reminder is set for that type, click to open modal and edit/delete
-              */}
           {reminders?.find(reminder => reminder.type === 'water') ? (
-            <ExistingReminder type='water' reminders={reminders} />
+            <ExistingReminder
+              type='water'
+              reminders={reminders}
+              setEditMode={setEditMode}
+              setInitialValues={setInitialValues}
+              setModalVisible={setModalVisible}
+            />
           ) : (
             <NewReminder
               type='water'
@@ -96,7 +123,13 @@ export const Reminders = ({ plant }) => {
             />
           )}
           {reminders?.find(reminder => reminder.type === 'fertilize') ? (
-            <ExistingReminder type='fertilize' reminders={reminders} />
+            <ExistingReminder
+              type='fertilize'
+              reminders={reminders}
+              setEditMode={setEditMode}
+              setInitialValues={setInitialValues}
+              setModalVisible={setModalVisible}
+            />
           ) : (
             <NewReminder
               type='fertilize'
@@ -106,7 +139,13 @@ export const Reminders = ({ plant }) => {
             />
           )}
           {reminders?.find(reminder => reminder.type === 'repot') ? (
-            <ExistingReminder type='repot' reminders={reminders} />
+            <ExistingReminder
+              type='repot'
+              reminders={reminders}
+              setEditMode={setEditMode}
+              setInitialValues={setInitialValues}
+              setModalVisible={setModalVisible}
+            />
           ) : (
             <NewReminder
               type='repot'
@@ -127,7 +166,13 @@ export const Reminders = ({ plant }) => {
                 <Text style={styles.buttonText}>Cancel</Text>
               </Pressable>
             </View>
-            <RemindersForm editMode={editMode} initialValues={initialValues} plant={plant} />
+            <RemindersForm
+              editMode={editMode}
+              initialValues={initialValues}
+              plant={plant}
+              currentUserId={currentUser._id}
+              setModalVisible={setModalVisible}
+            />
           </View>
         </SafeAreaView>
       </Modal>
@@ -163,7 +208,22 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
     fontFamily: 'Quicksand-Bold',
     fontSize: 16,
+  },
+  dateWrapper: {
+    marginTop: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dateIcon: {
+    marginRight: 5,
+  },
+  dateText: {
+    fontSize: 14,
     opacity: 0.7,
+  },
+  due: {
+    color: COLORS.error,
+    opacity: 1,
   },
   newReminderWrapper: {
     borderStyle: 'dashed',
