@@ -95,7 +95,7 @@ export const Reminders = ({ plant }) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [initialValues, setInitialValues] = useState(undefined)
 
-  const { data: reminders, status } = useQuery(['reminders'], async () => {
+  const { data: reminders, status } = useQuery(['plant-reminders', plant._id], async () => {
     const { data } = await axios.get(`${API_URL}/plant-reminders/${plant._id}/${currentUser._id}`)
     return data.reminders
   })

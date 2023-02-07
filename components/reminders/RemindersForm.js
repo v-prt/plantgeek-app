@@ -116,12 +116,12 @@ export const RemindersForm = ({
       const reminderId = editMode
       // update reminder
       const result = await axios.put(`${API_URL}/reminders/${reminderId}`, data)
-      queryClient.invalidateQueries('reminders')
+      queryClient.invalidateQueries('plant-reminders')
       if (result) setModalVisible(false)
     } else {
       // create reminder
       const result = await axios.post(`${API_URL}/reminders`, data)
-      queryClient.invalidateQueries('reminders')
+      queryClient.invalidateQueries('plant-reminders')
       if (result) setModalVisible(false)
     }
   }
