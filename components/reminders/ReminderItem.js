@@ -66,19 +66,44 @@ export const ReminderItem = ({ reminder, selectedItem, setSelectedItem }) => {
 
     try {
       await axios.put(`${API_URL}/reminders/${reminder._id}/complete`)
+      queryClient.invalidateQueries('plant-reminders')
+      queryClient.invalidateQueries('reminders')
     } catch (err) {
       Alert.alert('Error', 'Something went wrong. Please try again later.')
       console.log(err)
     }
 
-    queryClient.invalidateQueries('plant-reminders')
-    queryClient.invalidateQueries('reminders')
     setLoading(false)
   }
 
   const handleDelete = async () => {
-    // TODO: send request to delete, smoothly animate the original reminder out of the list on success
+    // TODO: smoothly animate the deleted reminder away
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    Alert.alert(
+      'Delete Reminder',
+      'Are you sure you want to delete this reminder?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await axios.delete(`${API_URL}/reminders/${reminder._id}`)
+              queryClient.invalidateQueries('plant-reminders')
+              queryClient.invalidateQueries('reminders')
+            } catch (err) {
+              Alert.alert('Error', 'Something went wrong. Please try again later.')
+              console.log(err)
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    )
   }
 
   return (
