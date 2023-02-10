@@ -19,28 +19,31 @@ import { RemindersForm } from './RemindersForm'
 import { MaterialIcons } from '@expo/vector-icons'
 
 const ExistingReminder = ({ type, reminders, setEditMode, setInitialValues, setModalVisible }) => {
-  const reminderId = reminders?.find(reminder => reminder.type === type)?._id
-
-  const due = moment(reminders?.find(reminder => reminder.type === type).dateDue).isBefore(
-    new Date()
-  )
+  const reminder = reminders?.find(reminder => reminder.type === type)
+  // TODO: styling for due reminders (red/orange text)
+  const due = moment(reminder?.dateDue).isBefore(new Date())
 
   return (
     <View style={styles.reminderWrapper}>
       <View>
         <Text style={styles.reminderText}>{type}</Text>
-        <View style={styles.dateWrapper}>
-          <MaterialIcons
-            name='calendar-today'
-            size={14}
-            color={due ? COLORS.error : COLORS.primary100}
-            style={styles.dateIcon}
-          />
-          <Text style={[styles.dateText, due && styles.due]}>
-            {/* TODO: format date to say yesterday, today, or tomorrow if applicable */}
-            {/* TODO: add frequency */}
-            {moment(reminders?.find(reminder => reminder.type === type).dateDue).format('ll')}
-          </Text>
+        <View style={styles.reminderInfo}>
+          <View style={styles.iconTextWrapper}>
+            <MaterialIcons
+              name='calendar-today'
+              size={16}
+              color={COLORS.primary100}
+              style={styles.icon}
+            />
+            <Text>{moment(reminder.dateDue).format('ll')}</Text>
+          </View>
+          <Text style={styles.divider}>•</Text>
+          <View style={styles.iconTextWrapper}>
+            <MaterialIcons name='repeat' size={16} color={COLORS.primary100} style={styles.icon} />
+            <Text>
+              {reminder.frequencyNumber} {reminder.frequencyUnit}
+            </Text>
+          </View>
         </View>
       </View>
 
@@ -50,12 +53,12 @@ const ExistingReminder = ({ type, reminders, setEditMode, setInitialValues, setM
           icon='info-outline'
           color={COLORS.primary400}
           onPress={() => {
-            setEditMode(reminderId)
+            setEditMode(reminder._id)
             setInitialValues({
               type,
-              dateDue: reminders?.find(reminder => reminder.type === type).dateDue,
-              frequencyNumber: reminders?.find(reminder => reminder.type === type).frequencyNumber,
-              frequencyUnit: reminders?.find(reminder => reminder.type === type).frequencyUnit,
+              dateDue: reminder.dateDue,
+              frequencyNumber: reminder.frequencyNumber,
+              frequencyUnit: reminder.frequencyUnit,
             })
             setModalVisible(true)
           }}
@@ -102,7 +105,7 @@ export const Reminders = ({ plant }) => {
 
   return inCollection ? (
     <View style={styles.wrapper}>
-      <Text style={styles.title}>Schedule</Text>
+      <Text style={styles.title}>Reminders</Text>
       {status === 'loading' && <ActivityIndicator size='small' color={COLORS.primary100} />}
       {status === 'success' && (
         <View style={styles.buttons}>
@@ -141,7 +144,7 @@ export const Reminders = ({ plant }) => {
           {reminders?.find(reminder => reminder.type === 'repot') ? (
             <ExistingReminder
               type='repot'
-              reminders={reminders}
+              reminder={reminders}
               setEditMode={setEditMode}
               setInitialValues={setInitialValues}
               setModalVisible={setModalVisible}
@@ -161,7 +164,7 @@ export const Reminders = ({ plant }) => {
         <SafeAreaView style={styles.modalWrapper}>
           <View style={styles.modalInner}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{editMode ? 'Edit' : 'New'} Schedule</Text>
+              <Text style={styles.modalTitle}>{editMode ? 'Edit' : 'New'} Reminder</Text>
               <Pressable onPress={() => setModalVisible(false)}>
                 <Text style={styles.buttonText}>Cancel</Text>
               </Pressable>
@@ -209,10 +212,28 @@ const styles = StyleSheet.create({
     fontFamily: 'Quicksand-Bold',
     fontSize: 16,
   },
-  dateWrapper: {
+  reminderInfo: {
     marginTop: 5,
     flexDirection: 'row',
     alignItems: 'center',
+    opacity: 0.7,
+  },
+  reminderType: {
+    fontFamily: 'Quicksand-Bold',
+    textTransform: 'capitalize',
+  },
+  date: {
+    fontSize: 16,
+  },
+  iconTextWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  icon: {
+    marginRight: 5,
+  },
+  divider: {
+    marginHorizontal: 10,
   },
   dateIcon: {
     marginRight: 5,

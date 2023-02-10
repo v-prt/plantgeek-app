@@ -1,12 +1,21 @@
+import { useState } from 'react'
 import { StyleSheet, FlatList, View, Text } from 'react-native'
 import { ReminderItem } from './ReminderItem'
 import { COLORS } from '../../GlobalStyles'
 
 export const RemindersList = ({ reminders, infiniteScroll }) => {
+  const [selectedItem, setSelectedItem] = useState(null)
+
   return reminders?.length > 0 ? (
     <FlatList
       data={reminders}
-      renderItem={({ item }) => <ReminderItem reminder={item} />}
+      renderItem={({ item }) => (
+        <ReminderItem
+          reminder={item}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+        />
+      )}
       keyExtractor={item => item._id}
       style={styles.list}
       showsVerticalScrollIndicator={false}
