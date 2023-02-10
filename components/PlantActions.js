@@ -50,20 +50,53 @@ export const PlantActions = ({ plant }) => {
           <>
             <Pressable
               onPress={() => {
-                setFieldValue(
-                  'owned',
-                  !owned
-                    ? [...values.owned, currentUser._id]
-                    : values.owned.filter(id => id !== currentUser._id)
-                )
-                setFieldValue(
-                  'plantCollection',
-                  !owned
-                    ? [...values.plantCollection, plantId]
-                    : values.plantCollection.filter(id => id !== plantId)
-                )
-                setOwned(!owned)
-                handleSubmit()
+                if (owned) {
+                  Alert.alert(
+                    'Remove from collection',
+                    'Are you sure you want to remove this plant from your collection? Any reminders will be deleted.',
+                    [
+                      {
+                        text: 'Cancel',
+                        style: 'cancel',
+                      },
+                      {
+                        text: 'Remove',
+                        onPress: () => {
+                          //  TODO: when removing from collection, delete related reminders (update on website too)
+                          setFieldValue(
+                            'owned',
+                            owned
+                              ? [...values.owned, currentUser._id]
+                              : values.owned.filter(id => id !== currentUser._id)
+                          )
+                          setFieldValue(
+                            'plantCollection',
+                            owned
+                              ? [...values.plantCollection, plantId]
+                              : values.plantCollection.filter(id => id !== plantId)
+                          )
+                          setOwned(!owned)
+                          handleSubmit()
+                        },
+                      },
+                    ]
+                  )
+                } else {
+                  setFieldValue(
+                    'owned',
+                    !owned
+                      ? [...values.owned, currentUser._id]
+                      : values.owned.filter(id => id !== currentUser._id)
+                  )
+                  setFieldValue(
+                    'plantCollection',
+                    !owned
+                      ? [...values.plantCollection, plantId]
+                      : values.plantCollection.filter(id => id !== plantId)
+                  )
+                  setOwned(!owned)
+                  handleSubmit()
+                }
               }}
               style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
               <Text style={styles.actionText}>{owned ? 'Remove from' : 'Add to'} collection</Text>
@@ -134,7 +167,7 @@ const styles = StyleSheet.create({
   wrapper: {
     width: '100%',
     backgroundColor: 'rgba(255,255,255,0.1)',
-    marginVertical: 20,
+    marginBottom: 20,
     borderRadius: 16,
   },
   actionButton: {

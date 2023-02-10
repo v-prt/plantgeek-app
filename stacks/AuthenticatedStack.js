@@ -10,6 +10,7 @@ import { PlantProfile } from '../screens/PlantProfile'
 import { ManagePlant } from '../screens/ManagePlant'
 import { Collection } from '../screens/Collection'
 import { Wishlist } from '../screens/Wishlist'
+import { Schedule } from '../screens/Schedule'
 import { Contributions } from '../screens/Contributions'
 import { UserProfile } from '../screens/UserProfile'
 import { Settings } from '../screens/Settings'
@@ -17,6 +18,7 @@ import { IconButton } from '../components/ui/IconButton'
 
 const searchIcon = require('../assets/images/search.png')
 const plantIcon = require('../assets/images/plant.png')
+const calendarIcon = require('../assets/images/calendar.png')
 const starIcon = require('../assets/images/star.png')
 const personIcon = require('../assets/images/person.png')
 
@@ -220,17 +222,7 @@ export const AuthenticatedStack = () => {
     <PlantProvider>
       <Tab.Navigator
         screenOptions={{
-          headerStyle: {
-            backgroundColor: COLORS.primary800,
-          },
-          headerTintColor: COLORS.primary100,
-          headerShadowVisible: false,
-          tabBarStyle: {
-            backgroundColor: COLORS.primary800,
-            borderTopWidth: 0,
-          },
-          tabBarInactiveTintColor: COLORS.primary100,
-          tabBarActiveTintColor: COLORS.primary400,
+          ...stackScreenOptions,
           tabBarLabel: () => null, // hide tab labels
         }}>
         <Tab.Screen
@@ -260,6 +252,19 @@ export const AuthenticatedStack = () => {
             headerShown: false,
             tabBarIcon: ({ focused }) => (
               <Image source={starIcon} style={[styles.tabIcon, focused && styles.tabFocused]} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name='Schedule'
+          component={Schedule}
+          options={{
+            headerStyle: {
+              backgroundColor: '#222',
+            },
+            headerTitle: () => <Text style={styles.headerTitle}>Care Schedule</Text>,
+            tabBarIcon: ({ focused }) => (
+              <Image source={calendarIcon} style={[styles.tabIcon, focused && styles.tabFocused]} />
             ),
           }}
         />

@@ -16,6 +16,7 @@
     "axios": "^1.2.2",
     "expo": "~47.0.12",
     "expo-haptics": "^12.0.1",
+    "expo-image-picker": "~14.0.2",
     "expo-linear-gradient": "~12.0.1",
     "expo-secure-store": "^12.0.0",
     "expo-splash-screen": "~0.17.5",
@@ -30,7 +31,7 @@
     "react-native-keyboard-aware-scrollview": "^2.1.0",
     "react-query": "^3.39.2",
     "yup": "^0.32.11",
-    "expo-image-picker": "~14.0.2"
+    "@react-native-community/datetimepicker": "6.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
