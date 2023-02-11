@@ -139,7 +139,7 @@ export const ReminderItem = ({ reminder, selectedItem, setSelectedItem }) => {
                 color={due ? COLORS.warning : COLORS.primary100}
                 style={styles.icon}
               />
-              <Text style={due && styles.due}>{dateText}</Text>
+              <Text style={[styles.infoText, due && styles.due]}>{dateText}</Text>
             </View>
             <Text style={styles.divider}>•</Text>
             <View style={styles.iconTextWrapper}>
@@ -149,7 +149,7 @@ export const ReminderItem = ({ reminder, selectedItem, setSelectedItem }) => {
                 color={COLORS.primary100}
                 style={styles.icon}
               />
-              <Text>
+              <Text style={styles.infoText}>
                 {reminder.frequencyNumber} {reminder.frequencyUnit}
               </Text>
             </View>
@@ -245,7 +245,9 @@ const styles = StyleSheet.create({
   },
   plantSecondaryName: {
     fontSize: 14,
-    marginBottom: 10,
+    marginTop: 3,
+    marginBottom: 15,
+    opacity: 0.7,
   },
   reminderInfo: {
     flexDirection: 'row',
@@ -254,14 +256,14 @@ const styles = StyleSheet.create({
   },
   reminderType: {
     fontFamily: 'Quicksand-Bold',
-    textTransform: 'capitalize',
-  },
-  date: {
-    fontSize: 16,
+    textTransform: 'uppercase',
   },
   iconTextWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  infoText: {
+    fontFamily: 'Quicksand-Bold',
   },
   due: {
     color: COLORS.warning,

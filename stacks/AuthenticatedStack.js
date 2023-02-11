@@ -1,4 +1,7 @@
-import { StyleSheet, Image, Text } from 'react-native'
+import { useQuery } from 'react-query'
+import axios from 'axios'
+import { API_URL } from '../constants'
+import { StyleSheet, Image, Text, View } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { MaterialIcons } from '@expo/vector-icons'
@@ -217,7 +220,12 @@ const ProfileStack = () => {
   )
 }
 
-export const AuthenticatedStack = () => {
+export const AuthenticatedStack = ({ currentUser }) => {
+  const { data: dueReminders } = useQuery(['due-reminders', currentUser._id], async () => {
+    const { data } = await axios.get(`${API_URL}/due-reminders/${currentUser._id}`)
+    return data.numDue
+  })
+
   return (
     <PlantProvider>
       <Tab.Navigator
@@ -264,7 +272,13 @@ export const AuthenticatedStack = () => {
             },
             headerTitle: () => <Text style={styles.headerTitle}>Care Schedule</Text>,
             tabBarIcon: ({ focused }) => (
-              <Image source={calendarIcon} style={[styles.tabIcon, focused && styles.tabFocused]} />
+              <View style={styles.tabIconWrapper}>
+                <Image
+                  source={calendarIcon}
+                  style={[styles.tabIcon, focused && styles.tabFocused]}
+                />
+                {dueReminders > 0 && <View style={styles.badge} />}
+              </View>
             ),
           }}
         />
@@ -288,12 +302,27 @@ const styles = StyleSheet.create({
     fontFamily: 'Quicksand-Bold',
     fontSize: 20,
   },
+  tabIconWrapper: {
+    position: 'relative',
+  },
   tabIcon: {
     width: 30,
     height: 30,
     tintColor: COLORS.primary100,
+    opacity: 0.5,
   },
   tabFocused: {
-    tintColor: COLORS.primary400,
+    opacity: 1,
+  },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: COLORS.warning,
+    borderRadius: 5,
+    height: 10,
+    width: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 })

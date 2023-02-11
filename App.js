@@ -15,7 +15,7 @@ const queryClient = new QueryClient()
 SplashScreen.preventAutoHideAsync()
 
 const Root = () => {
-  const { authenticated } = useContext(UserContext)
+  const { authenticated, currentUser } = useContext(UserContext)
 
   return (
     <View style={styles.app}>
@@ -25,7 +25,11 @@ const Root = () => {
             background: COLORS.primary800,
           },
         }}>
-        {authenticated ? <AuthenticatedStack /> : <UnauthenticatedStack />}
+        {authenticated && currentUser ? (
+          <AuthenticatedStack currentUser={currentUser} />
+        ) : (
+          <UnauthenticatedStack />
+        )}
       </NavigationContainer>
     </View>
   )

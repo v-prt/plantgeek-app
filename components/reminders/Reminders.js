@@ -17,6 +17,7 @@ import { COLORS } from '../../GlobalStyles'
 import { IconButton } from '../ui/IconButton'
 import { RemindersForm } from './RemindersForm'
 import { MaterialIcons } from '@expo/vector-icons'
+import { useNavigation } from '@react-navigation/native'
 
 const ExistingReminder = ({ type, reminders, setEditMode, setInitialValues, setModalVisible }) => {
   const reminder = reminders?.find(reminder => reminder.type === type)
@@ -42,12 +43,12 @@ const ExistingReminder = ({ type, reminders, setEditMode, setInitialValues, setM
               color={due ? COLORS.warning : COLORS.primary100}
               style={styles.icon}
             />
-            <Text style={due && styles.due}>{dateText}</Text>
+            <Text style={[styles.infoText, due && styles.due]}>{dateText}</Text>
           </View>
           <Text style={styles.divider}>•</Text>
           <View style={styles.iconTextWrapper}>
             <MaterialIcons name='repeat' size={16} color={COLORS.primary100} style={styles.icon} />
-            <Text>
+            <Text style={styles.infoText}>
               {reminder.frequencyNumber} {reminder.frequencyUnit}
             </Text>
           </View>
@@ -99,6 +100,7 @@ const NewReminder = ({ type, setEditMode, setInitialValues, setModalVisible }) =
 }
 
 export const Reminders = ({ plant }) => {
+  const navigation = useNavigation()
   const { currentUser } = useContext(UserContext)
   const inCollection = currentUser.plantCollection?.includes(plant._id)
   const [editMode, setEditMode] = useState(false)
@@ -167,6 +169,10 @@ export const Reminders = ({ plant }) => {
         </View>
       )}
 
+      <Pressable onPress={() => navigation.navigate('Schedule')} style={styles.link}>
+        <Text style={styles.buttonText}>View Schedule</Text>
+      </Pressable>
+
       <Modal visible={modalVisible} animationType='slide'>
         <SafeAreaView style={styles.modalWrapper}>
           <View style={styles.modalInner}>
@@ -229,20 +235,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  infoText: {
+    fontFamily: 'Quicksand-Bold',
+  },
+  due: {
+    color: COLORS.warning,
+  },
   icon: {
     marginRight: 5,
   },
   divider: {
     marginHorizontal: 10,
   },
-  due: {
-    color: COLORS.warning,
-  },
   newReminderWrapper: {
     borderStyle: 'dashed',
   },
   newReminderText: {
     opacity: 0.7,
+  },
+  link: {
+    marginTop: 10,
   },
   buttonText: {
     fontFamily: 'Quicksand-Bold',
