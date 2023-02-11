@@ -20,8 +20,15 @@ import { MaterialIcons } from '@expo/vector-icons'
 
 const ExistingReminder = ({ type, reminders, setEditMode, setInitialValues, setModalVisible }) => {
   const reminder = reminders?.find(reminder => reminder.type === type)
-  // TODO: styling for due reminders (red/orange text)
   const due = moment(reminder?.dateDue).isBefore(new Date())
+
+  const dateText = moment(reminder.dateDue).isSame(new Date(), 'day')
+    ? 'Today'
+    : moment(reminder.dateDue).isSame(moment().subtract(1, 'days'), 'day')
+    ? 'Yesterday'
+    : moment(reminder.dateDue).isSame(moment().add(1, 'days'), 'day')
+    ? 'Tomorrow'
+    : moment(reminder.dateDue).format('ll')
 
   return (
     <View style={styles.reminderWrapper}>
@@ -32,10 +39,10 @@ const ExistingReminder = ({ type, reminders, setEditMode, setInitialValues, setM
             <MaterialIcons
               name='calendar-today'
               size={16}
-              color={COLORS.primary100}
+              color={due ? COLORS.warning : COLORS.primary100}
               style={styles.icon}
             />
-            <Text>{moment(reminder.dateDue).format('ll')}</Text>
+            <Text style={due && styles.due}>{dateText}</Text>
           </View>
           <Text style={styles.divider}>•</Text>
           <View style={styles.iconTextWrapper}>
@@ -144,7 +151,7 @@ export const Reminders = ({ plant }) => {
           {reminders?.find(reminder => reminder.type === 'repot') ? (
             <ExistingReminder
               type='repot'
-              reminder={reminders}
+              reminders={reminders}
               setEditMode={setEditMode}
               setInitialValues={setInitialValues}
               setModalVisible={setModalVisible}
@@ -216,14 +223,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    opacity: 0.7,
-  },
-  reminderType: {
-    fontFamily: 'Quicksand-Bold',
-    textTransform: 'capitalize',
-  },
-  date: {
-    fontSize: 16,
+    opacity: 0.8,
   },
   iconTextWrapper: {
     flexDirection: 'row',
@@ -235,16 +235,8 @@ const styles = StyleSheet.create({
   divider: {
     marginHorizontal: 10,
   },
-  dateIcon: {
-    marginRight: 5,
-  },
-  dateText: {
-    fontSize: 14,
-    opacity: 0.7,
-  },
   due: {
-    color: COLORS.error,
-    opacity: 1,
+    color: COLORS.warning,
   },
   newReminderWrapper: {
     borderStyle: 'dashed',
