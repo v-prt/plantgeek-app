@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -4,
     right: -4,
-    backgroundColor: COLORS.warning,
+    backgroundColor: COLORS.error,
     borderRadius: 5,
     height: 10,
     width: 10,

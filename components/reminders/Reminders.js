@@ -34,13 +34,13 @@ const ExistingReminder = ({ type, reminders, setEditMode, setInitialValues, setM
   return (
     <View style={styles.reminderWrapper}>
       <View>
-        <Text style={styles.reminderText}>{type}</Text>
+        <Text style={styles.reminderType}>{type}</Text>
         <View style={styles.reminderInfo}>
           <View style={styles.iconTextWrapper}>
             <MaterialIcons
               name='calendar-today'
               size={16}
-              color={due ? COLORS.warning : COLORS.primary100}
+              color={due ? COLORS.error : COLORS.primary100}
               style={styles.icon}
             />
             <Text style={[styles.infoText, due && styles.due]}>{dateText}</Text>
@@ -79,7 +79,7 @@ const ExistingReminder = ({ type, reminders, setEditMode, setInitialValues, setM
 const NewReminder = ({ type, setEditMode, setInitialValues, setModalVisible }) => {
   return (
     <View style={[styles.reminderWrapper, styles.newReminderWrapper]}>
-      <Text style={[styles.reminderText, styles.newReminderText]}>{type}</Text>
+      <Text style={[styles.reminderType, styles.newReminderType]}>{type}</Text>
       <IconButton
         small
         icon='add-alert'
@@ -220,8 +220,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 10,
   },
-  reminderText: {
-    textTransform: 'capitalize',
+  reminderType: {
+    textTransform: 'uppercase',
     fontFamily: 'Quicksand-Bold',
     fontSize: 16,
   },
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Quicksand-Bold',
   },
   due: {
-    color: COLORS.warning,
+    color: COLORS.error,
   },
   icon: {
     marginRight: 5,
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   newReminderWrapper: {
     borderStyle: 'dashed',
   },
-  newReminderText: {
+  newReminderType: {
     opacity: 0.7,
   },
   link: {

@@ -136,7 +136,7 @@ export const ReminderItem = ({ reminder, selectedItem, setSelectedItem }) => {
               <MaterialIcons
                 name='calendar-today'
                 size={16}
-                color={due ? COLORS.warning : COLORS.primary100}
+                color={due ? COLORS.error : COLORS.primary100}
                 style={styles.icon}
               />
               <Text style={[styles.infoText, due && styles.due]}>{dateText}</Text>
@@ -231,8 +231,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.1)',
   },
   plantImage: {
-    width: 75,
-    height: 75,
+    width: 70,
+    height: 70,
     marginRight: 12,
   },
   text: {
@@ -246,17 +246,18 @@ const styles = StyleSheet.create({
   plantSecondaryName: {
     fontSize: 14,
     marginTop: 3,
-    marginBottom: 15,
     opacity: 0.7,
   },
   reminderInfo: {
+    marginTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
     opacity: 0.8,
   },
   reminderType: {
-    fontFamily: 'Quicksand-Bold',
     textTransform: 'uppercase',
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 16,
   },
   iconTextWrapper: {
     flexDirection: 'row',
@@ -266,10 +267,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Quicksand-Bold',
   },
   due: {
-    color: COLORS.warning,
+    color: COLORS.error,
   },
   divider: {
-    marginHorizontal: 10,
+    marginHorizontal: 8,
   },
   actions: {
     flexDirection: 'row',
